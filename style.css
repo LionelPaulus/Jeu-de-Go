@@ -1,0 +1,17 @@
+td{
+    width: 15px;
+    height: 15px;
+    border: thin solid;
+}
+
+table{
+    border-collapse: collapse;
+}
+
+.j1{
+    background-color: red;
+}
+
+.j2{
+    background- color: blue;
+}
