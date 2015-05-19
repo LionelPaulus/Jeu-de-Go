@@ -40,7 +40,7 @@ function ajoutPion(cell) {
     verifCellules();
 }
 
-/*function verifCellules(cell) {
+function verifCellules(cell) {
     for (a = 0; a < 9; a++) {
         for (b = 0; b < 9; b++) {
 
@@ -80,7 +80,7 @@ function ajoutPion(cell) {
 
         }
     }
-} */
+} 
 
 
 function verifCellules (){
@@ -92,7 +92,7 @@ function verifCellules (){
                         // Cellule de gauche
                         if (typeof (this.goban[a] && this.goban[a][b - 1]) != 'undefined') {
                             if (goban[a][b - 1]  == 0) {
-                                window["liberte" + this.goban[a][b] += 1;
+                                window["liberte" + this.goban[a][b]] += 1;
                             } else if (goban[a][b - 1] == this) {
                                 window["liberte" + this.goban[a][b].id] = window["liberte" + this.goban[a][b].id]+ window["liberte" + goban[a][b - 1].id] ;
                             }
@@ -147,9 +147,10 @@ function verifCellules (){
                             } else if (compteur_3 > compteur_1) {
                                 goban_temp[a][b] = "3";
                             }
+                            
 
-                        }
-                    */
+                            } */
+                    
                     
                     }
                 }
