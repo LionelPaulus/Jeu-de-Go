@@ -1,68 +1,56 @@
 #goban {
-    position: relative;
-    z-index:100;
-    display: inline-block;
-    width:468px;
-    height:468px;
-    margin-left:210px;
+  position: relative;
+  z-index: 100;
+  display: inline-block;
+  width: 468px;
+  height: 468px;
+  margin-left: 100px;
 }
-
 .lines div {
-    border-radius: 100px;
+  border-radius: 100px;
 }
-
-/* -------------- PIONS ---------------- */
+/* PIONS */
 
 .empty {
-    display:inline-block;
-    width:50px;
-    height:50px;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
 }
-
 .black {
-    display:inline-block;
-    width:50px;
-    height:50px;
-    background-color:black;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  background-color: black;
 }
-
 .white {
-    display:inline-block;
-    width:50px;
-    height:50px;
-    background-color:blue;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  background-color: blue;
 }
-
 #joueurInfo {
-    position:absolute;
-    display:inline-block;
-    margin-top:130px;
-    font-family:serif;
-    font-size:27px;
-
+  position: absolute;
+  display: inline-block;
+  margin-top: 130px;
+  font-family: serif;
+  font-size: 27px;
 }
+/* BACKGROUND */
 
-
-
-/* ----------------- BACKGROUND ---------------- */
-
-#background{
-    margin-left:225px;
-    margin-top:-456px;
-    width:418px;
-    height:418px;
+#background {
+  margin-left: 117px;
+  margin-top: -456px;
+  width: 418px;
+  height: 418px;
 }
-
 .bgLines {
-    width:468px;
-    height:50px;
-    margin-left:auto;
-
+  width: 468px;
+  height: 50px;
+  margin-left: auto;
 }
-
 .bgIntersection {
-    display:inline-block;
-    height:50px;
-    width:50px;
-    border:1px solid black;
+  display: inline-block;
+  height: 50px;
+  width: 50px;
+  border: 1px solid black;
 }
