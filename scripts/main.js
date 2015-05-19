@@ -14,8 +14,7 @@ for (var i = 0; i < rows; i++) {
   game[i] = new Array();
   for (var j = 0; j < rows; j++) {
     game[i][j] = new Array();
-    game[i][j][0] = 2;
-    game[i][j][0] = 0;
+    game[i][j] = 0;
   }
 }
 
@@ -68,24 +67,22 @@ function generate_background() {
 
 
 function toggle(id) {
-  console.log("case: " + id);
   var x_y = id.indexOf("_");
   var x = parseInt(id.substring(0, x_y));
   var y = parseInt(id.substring(x_y + 1));
 
 
-  if (game[x][y][0] != 0 || suicide(x, y) == true || ko(x, y) == true) {
+  if (game[x][y] != 0 || suicide(x, y) == true || ko(x, y) == true) {
     console.log("Impossible de jouer ici !");
     return;
   } else {
-    game[x][y][0] = player;
-    game[x][y][round] = player;
+    game[x][y] = player;
 
     identify_groups();
     capture(x, y);
     graphisme();
     round++;
-    playerTurn();
+    switch_player_turn();
   }
 
 }
@@ -93,16 +90,16 @@ function toggle(id) {
 
 
 function suicide(x, y) {
-  game[x][y][0] = player;
+  game[x][y] = player;
 
-  // OPTIMISER CETTE MERDE !!!!!!!! (Mais ca marche)
+  // A optimiser
   var suicide = true;
   identify_groups();
   var groupeNum = group[x][y];
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < rows; j++) {
       if (group[i][j] == groupeNum && groupeNum != 0) {
-        if (((j - 1) >= 0 && game[i][j - 1][0] == 0) || ((i + 1) < rows && game[i + 1][j][0] == 0) || ((j + 1) < rows && game[i][j + 1][0] == 0) || ((i - 1) >= 0 && game[i - 1][j][0] == 0)) {
+        if (((j - 1) >= 0 && game[i][j - 1] == 0) || ((i + 1) < rows && game[i + 1][j] == 0) || ((j + 1) < rows && game[i][j + 1] == 0) || ((i - 1) >= 0 && game[i - 1][j] == 0)) {
           suicide = false;
         }
       }
@@ -110,7 +107,7 @@ function suicide(x, y) {
   }
 
   if (suicide == true) {
-    game[x][y][0] = 0;
+    game[x][y] = 0;
     console.log("Suicide");
     return true;
   }
@@ -126,16 +123,16 @@ function ko(x, y) {
 
 
 function capture(x, y) {
-  if ((y - 1) >= 0 && game[x][y - 1][0] == adversary) {
+  if ((y - 1) >= 0 && game[x][y - 1] == adversary) {
     libertiesGroup(x, y - 1);
   }
-  if ((x + 1) < rows && game[x + 1][y][0] == adversary) {
+  if ((x + 1) < rows && game[x + 1][y] == adversary) {
     libertiesGroup(x + 1, y);
   }
-  if ((y + 1) < rows && game[x][y + 1][0] == adversary) {
+  if ((y + 1) < rows && game[x][y + 1] == adversary) {
     libertiesGroup(x, y + 1);
   }
-  if ((x - 1) >= 0 && game[x - 1][y][0] == adversary) {
+  if ((x - 1) >= 0 && game[x - 1][y] == adversary) {
     libertiesGroup(x - 1, y);
   }
 }
@@ -147,7 +144,7 @@ function identify_groups() {
 
   for (i = 0; i < rows; i++) {
     for (j = 0; j < rows; j++) {
-      if (game[i][j][0] == 0) {
+      if (game[i][j] == 0) {
         group[i][j] = 0;
       } else {
         group[i][j] = Num_Groupe;
@@ -160,7 +157,7 @@ function identify_groups() {
   for (i = 0; i < rows; i++) {
     for (j = 0; j < rows; j++) {
 
-      if ((j - 1) >= 0 && game[i][j][0] == game[i][j - 1][0]) {
+      if ((j - 1) >= 0 && game[i][j] == game[i][j - 1]) {
         var ancienG = group[i][j - 1];
         for (var k = 0; k < rows; k++) {
           for (var l = 0; l < rows; l++) {
@@ -170,7 +167,7 @@ function identify_groups() {
           }
         }
       }
-      if ((i + 1) > rows && game[i][j][0] == game[i + 1][j][0]) {
+      if ((i + 1) > rows && game[i][j] == game[i + 1][j]) {
         var ancienG = group[i + 1][j];
         for (k = 0; k < rows; k++) {
           for (l = 0; l < rows; l++) {
@@ -180,7 +177,7 @@ function identify_groups() {
           }
         }
       }
-      if ((j + 1) < rows && game[i][j][0] == game[i][j + 1][0]) {
+      if ((j + 1) < rows && game[i][j] == game[i][j + 1]) {
         var ancienG = group[i][j + 1];
         for (var k = 0; k < rows; k++) {
           for (var l = 0; l < rows; l++) {
@@ -190,7 +187,7 @@ function identify_groups() {
           }
         }
       }
-      if ((i - 1) >= 0 && game[i][j][0] == game[i - 1][j][0]) {
+      if ((i - 1) >= 0 && game[i][j] == game[i - 1][j]) {
         var ancienG = group[i - 1][j];
         for (var k = 0; k < rows; k++) {
           for (var l = 0; l < rows; l++) {
@@ -212,7 +209,7 @@ function libertiesGroup(x, y) {
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < rows; j++) {
       if (group[i][j] == groupeNum && groupeNum != 0) {
-        if (((j - 1) >= 0 && game[i][j - 1][0] == 0) || ((i + 1) < rows && game[i + 1][j][0] == 0) || ((j + 1) < rows && game[i][j + 1][0] == 0) || ((i - 1) >= 0 && game[i - 1][j][0] == 0)) {
+        if (((j - 1) >= 0 && game[i][j - 1] == 0) || ((i + 1) < rows && game[i + 1][j] == 0) || ((j + 1) < rows && game[i][j + 1] == 0) || ((i - 1) >= 0 && game[i - 1][j] == 0)) {
           return;
           // Si un pion du groupe à une libertés, il n'y a pas capture
         }
@@ -220,21 +217,21 @@ function libertiesGroup(x, y) {
     }
   }
 
-
   // No more liberty
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < rows; j++) {
       if (group[i][j] == groupeNum) {
-        game[i][j][0] = 0;
-        //
+        game[i][j] = 0;
+        var lost_cells =+ 1;
       }
     }
   }
+  console.log("Le joueur " + player + " a mangé " + lost_cells + " cases à l'ennemi !");
 }
 
 
 
-function playerTurn() {
+function switch_player_turn() {
   if (player == 1) {
     adversary = 1;
     player = 2;
@@ -249,14 +246,14 @@ function playerTurn() {
 function graphisme() {
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < rows; j++) {
-      if (game[i][j][0] == 0) {
+      if (game[i][j] == 0) {
         var element = document.getElementById(i + "_" + j);
         element.setAttribute("class", "empty");
       }
-      if (game[i][j][0] == 1) {
+      if (game[i][j] == 1) {
         var element = document.getElementById(i + "_" + j);
         element.setAttribute("class", "player1");
-      } else if (game[i][j][0] == 2) {
+      } else if (game[i][j] == 2) {
         var element = document.getElementById(i + "_" + j);
         element.setAttribute("class", "player2");
       }
