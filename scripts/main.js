@@ -140,15 +140,15 @@ function capture(x, y) {
 
 function identify_groups() {
 
-  var Num_Groupe = 1;
+  var group_id = 1;
 
   for (i = 0; i < rows; i++) {
     for (j = 0; j < rows; j++) {
       if (game[i][j] == 0) {
         group[i][j] = 0;
       } else {
-        group[i][j] = Num_Groupe;
-        Num_Groupe++;
+        group[i][j] = group_id;
+        group_id++;
       }
     }
   }
@@ -156,42 +156,41 @@ function identify_groups() {
 
   for (i = 0; i < rows; i++) {
     for (j = 0; j < rows; j++) {
-
       if ((j - 1) >= 0 && game[i][j] == game[i][j - 1]) {
-        var ancienG = group[i][j - 1];
+        var old_group = group[i][j - 1];
         for (var k = 0; k < rows; k++) {
           for (var l = 0; l < rows; l++) {
-            if (group[k][l] == ancienG) {
+            if (group[k][l] == old_group) {
               group[k][l] = group[i][j];
             }
           }
         }
       }
       if ((i + 1) > rows && game[i][j] == game[i + 1][j]) {
-        var ancienG = group[i + 1][j];
+        var old_group = group[i + 1][j];
         for (k = 0; k < rows; k++) {
           for (l = 0; l < rows; l++) {
-            if (group[k][l] == ancienG) {
+            if (group[k][l] == old_group) {
               group[k][l] = group[i][j];
             }
           }
         }
       }
       if ((j + 1) < rows && game[i][j] == game[i][j + 1]) {
-        var ancienG = group[i][j + 1];
+        var old_group = group[i][j + 1];
         for (var k = 0; k < rows; k++) {
           for (var l = 0; l < rows; l++) {
-            if (group[k][l] == ancienG) {
+            if (group[k][l] == old_group) {
               group[k][l] = group[i][j];
             }
           }
         }
       }
       if ((i - 1) >= 0 && game[i][j] == game[i - 1][j]) {
-        var ancienG = group[i - 1][j];
+        var old_group = group[i - 1][j];
         for (var k = 0; k < rows; k++) {
           for (var l = 0; l < rows; l++) {
-            if (group[k][l] == ancienG) {
+            if (group[k][l] == old_group) {
               group[k][l] = group[i][j];
             }
           }
@@ -218,15 +217,17 @@ function libertiesGroup(x, y) {
   }
 
   // No more liberty
+  var lost_cells = 0;
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < rows; j++) {
       if (group[i][j] == groupeNum) {
         game[i][j] = 0;
-        var lost_cells =+ 1;
+        lost_cells += 1;
       }
     }
   }
   console.log("Le joueur " + player + " a mangé " + lost_cells + " cases à l'ennemi !");
+  $lost_cells = 0;
 }
 
 
