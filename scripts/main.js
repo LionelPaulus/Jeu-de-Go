@@ -80,7 +80,7 @@ function toggle(id) {
 
     identify_groups();
     capture(x, y);
-    graphisme();
+    update_html();
     round++;
     switch_player_turn();
   }
@@ -244,7 +244,7 @@ function switch_player_turn() {
 
 
 
-function graphisme() {
+function update_html() {
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < rows; j++) {
       if (game[i][j] == 0) {
