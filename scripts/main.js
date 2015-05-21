@@ -28,7 +28,7 @@ function generate_background() {
 
         for (var j = 0; j < (rows - 1); j++) {
 
-            background += '<div class="bgIntersection"></div>';
+            background += '<div class="bgJunction"></div>';
 
         }
 
@@ -72,7 +72,7 @@ function next_step(id) {
     if (grid[x][y] != 0 || suicide(x, y) == true){
         console.log("Impossible de jouer ici !");
         return;
-    } 
+    }
         else {
         grid[x][y] = player;
 
