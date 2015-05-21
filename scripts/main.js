@@ -151,40 +151,40 @@ function identify_groups() {
     for (i = 0; i < rows; i++) {
         for (j = 0; j < rows; j++) {
             if ((j - 1) >= 0 && grid[i][j] == grid[i][j - 1]) {
-                var old_group = group[i][j - 1];
+                var former_group = group[i][j - 1];
                 for (var k = 0; k < rows; k++) {
                     for (var l = 0; l < rows; l++) {
-                        if (group[k][l] == old_group) {
+                        if (group[k][l] == former_group) {
                             group[k][l] = group[i][j];
                         }
                     }
                 }
             }
             if ((i + 1) > rows && grid[i][j] == grid[i + 1][j]) {
-                var old_group = group[i + 1][j];
+                var former_group = group[i + 1][j];
                 for (k = 0; k < rows; k++) {
                     for (l = 0; l < rows; l++) {
-                        if (group[k][l] == old_group) {
+                        if (group[k][l] == former_group) {
                             group[k][l] = group[i][j];
                         }
                     }
                 }
             }
             if ((j + 1) < rows && grid[i][j] == grid[i][j + 1]) {
-                var old_group = group[i][j + 1];
+                var former_group = group[i][j + 1];
                 for (var k = 0; k < rows; k++) {
                     for (var l = 0; l < rows; l++) {
-                        if (group[k][l] == old_group) {
+                        if (group[k][l] == former_group) {
                             group[k][l] = group[i][j];
                         }
                     }
                 }
             }
             if ((i - 1) >= 0 && grid[i][j] == grid[i - 1][j]) {
-                var old_group = group[i - 1][j];
+                var former_group = group[i - 1][j];
                 for (var k = 0; k < rows; k++) {
                     for (var l = 0; l < rows; l++) {
-                        if (group[k][l] == old_group) {
+                        if (group[k][l] == former_group) {
                             group[k][l] = group[i][j];
                         }
                     }
