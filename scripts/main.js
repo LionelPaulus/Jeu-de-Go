@@ -69,11 +69,10 @@ function next_step(id) {
     var y = parseInt(id.substring(x_y + 1));
 
 
-    if (grid[x][y] != 0 || suicide(x, y) == true){
+    if (grid[x][y] != 0 || suicide(x, y) == true) {
         console.log("Impossible de jouer ici !");
         return;
-    }
-        else {
+    } else {
         grid[x][y] = player;
 
         identify_groups();
@@ -210,17 +209,17 @@ function count_liberties(x, y) {
     }
 
     // No more liberty
-    var lost_cells = 0;
+    var prisoners = 0;
     for (var i = 0; i < rows; i++) {
         for (var j = 0; j < rows; j++) {
             if (group[i][j] == groupName) {
                 grid[i][j] = 0;
-                lost_cells += 1;
+                prisoners += 1;
             }
         }
     }
-    console.log("Le joueur " + player + " a capturé " + lost_cells + " cases à l'ennemi !");
-    $lost_cells = 0;
+    console.log("Le joueur " + player + " a capturé " + prisoners + " pierres à l'ennemi !");
+    $prisoners = 0;
 }
 
 
