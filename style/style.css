@@ -1,4 +1,4 @@
-#game {
+#grid {
   z-index: 100;
   display: inline-block;
   position: absolute;
@@ -11,6 +11,7 @@
 .lines div {
   border-radius: 100px;
 }
+
 /* PIONS */
 
 .empty {
@@ -45,7 +46,7 @@
 }
 /* BACKGROUND */
 
-#grid {
+#goban {
   position: absolute;
   left: 50%;
   margin-left: -209px;
@@ -58,7 +59,7 @@
   height: 50px;
   margin-left: auto;
 }
-.bgIntersection {
+.bgJunction {
   display: inline-block;
   height: 50px;
   width: 50px;
