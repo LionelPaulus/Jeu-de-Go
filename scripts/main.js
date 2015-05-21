@@ -24,7 +24,7 @@ function generate_background() {
     document.getElementById("goban").innerHTML = "";
 
     for (var i = 0; i < (rows - 1); i++) {
-        background += "<div class='bgLines'>";
+        background += "<div class='bgRows'>";
 
         for (var j = 0; j < (rows - 1); j++) {
 
@@ -87,12 +87,9 @@ function next_step(id) {
 
 }
 
-
-
 function suicide(x, y) {
     grid[x][y] = player;
 
-    // A optimiser
     var suicide = true;
     identify_groups();
     var groupName = group[x][y];
@@ -112,22 +109,6 @@ function suicide(x, y) {
         return true;
     }
     return false;
-}
-
-
-function capture(x, y) {
-    if ((y - 1) >= 0 && grid[x][y - 1] != player) {
-        count_liberties(x, y - 1);
-    }
-    if ((x + 1) < rows && grid[x + 1][y] != player) {
-        count_liberties(x + 1, y);
-    }
-    if ((y + 1) < rows && grid[x][y + 1] != player) {
-        count_liberties(x, y + 1);
-    }
-    if ((x - 1) >= 0 && grid[x - 1][y] != player) {
-        count_liberties(x - 1, y);
-    }
 }
 
 
@@ -190,6 +171,21 @@ function identify_groups() {
                 }
             }
         }
+    }
+}
+
+function capture(x, y) {
+    if ((y - 1) >= 0 && grid[x][y - 1] != player) {
+        count_liberties(x, y - 1);
+    }
+    if ((x + 1) < rows && grid[x + 1][y] != player) {
+        count_liberties(x + 1, y);
+    }
+    if ((y + 1) < rows && grid[x][y + 1] != player) {
+        count_liberties(x, y + 1);
+    }
+    if ((x - 1) >= 0 && grid[x - 1][y] != player) {
+        count_liberties(x - 1, y);
     }
 }
 
