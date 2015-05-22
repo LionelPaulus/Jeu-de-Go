@@ -34,29 +34,9 @@ function generate_background() {
 
   }
   document.getElementById("goban").innerHTML = '</tbody></table>' + background;
-  /*
-    var background = '';
-    document.getElementById("goban").innerHTML = "";
-
-    for (var i = 0; i < (rows - 1); i++) {
-        background += "<div class='bgLines'>";
-
-        for (var j = 0; j < (rows - 1); j++) {
-
-            background += '<div class="bgJunction"></div>';
-
-        }
-
-        background = background + '</div>';
-
-    }
-
-    document.getElementById("goban").innerHTML = background;
-
-*/
 }
 
-function generate_cells() { // A clic adds a cell
+function generate_cells() {
   var goban = '';
 
   document.getElementById("grid").innerHTML = "";
@@ -83,7 +63,6 @@ function next_step(id) {
   var x = parseInt(id.substring(0, x_y));
   var y = parseInt(id.substring(x_y + 1));
 
-
   if (grid[x][y] != 0 || suicide(x, y) == true) {
     console.log("Impossible de jouer ici !");
     return;
@@ -99,50 +78,30 @@ function next_step(id) {
       player = 1;
     }
   }
-
 }
-
-
 
 function suicide(x, y) {
-  grid[x][y] = player;
+    grid[x][y] = player;
 
-  // A optimiser
-  var suicide = true;
-  identify_groups();
-  var groupName = group[x][y];
-  for (var i = 0; i < rows; i++) {
-    for (var j = 0; j < rows; j++) {
-      if (group[i][j] == groupName && groupName != 0) {
-        if (((j - 1) >= 0 && grid[i][j - 1] == 0) || ((i + 1) < rows && grid[i + 1][j] == 0) || ((j + 1) < rows && grid[i][j + 1] == 0) || ((i - 1) >= 0 && grid[i - 1][j] == 0)) {
-          suicide = false;
+    var suicide = true;
+    identify_groups();
+    var groupName = group[x][y];
+    for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < rows; j++) {
+            if (group[i][j] == groupName && groupName != 0) {
+                if (((j - 1) >= 0 && grid[i][j - 1] == 0) || ((i + 1) < rows && grid[i + 1][j] == 0) || ((j + 1) < rows && grid[i][j + 1] == 0) || ((i - 1) >= 0 && grid[i - 1][j] == 0)) {
+                    suicide = false;
+                }
+            }
         }
-      }
     }
-  }
 
-  if (suicide == true) {
-    grid[x][y] = 0;
-    console.log("Suicide");
-    return true;
-  }
-  return false;
-}
-
-
-function capture(x, y) {
-  if ((y - 1) >= 0 && grid[x][y - 1] != player) {
-    count_liberties(x, y - 1);
-  }
-  if ((x + 1) < rows && grid[x + 1][y] != player) {
-    count_liberties(x + 1, y);
-  }
-  if ((y + 1) < rows && grid[x][y + 1] != player) {
-    count_liberties(x, y + 1);
-  }
-  if ((x - 1) >= 0 && grid[x - 1][y] != player) {
-    count_liberties(x - 1, y);
-  }
+    if (suicide == true) {
+        grid[x][y] = 0;
+        return true;
+        // The player tries a suicide but we won't let him !
+    }
+    return false;
 }
 
 
@@ -165,46 +124,61 @@ function identify_groups() {
   for (i = 0; i < rows; i++) {
     for (j = 0; j < rows; j++) {
       if ((j - 1) >= 0 && grid[i][j] == grid[i][j - 1]) {
-        var old_group = group[i][j - 1];
+        var former_group = group[i][j - 1];
         for (var k = 0; k < rows; k++) {
           for (var l = 0; l < rows; l++) {
-            if (group[k][l] == old_group) {
+            if (group[k][l] == former_group) {
               group[k][l] = group[i][j];
             }
           }
         }
       }
       if ((i + 1) > rows && grid[i][j] == grid[i + 1][j]) {
-        var old_group = group[i + 1][j];
+        var former_group = group[i + 1][j];
         for (k = 0; k < rows; k++) {
           for (l = 0; l < rows; l++) {
-            if (group[k][l] == old_group) {
+            if (group[k][l] == former_group) {
               group[k][l] = group[i][j];
             }
           }
         }
       }
       if ((j + 1) < rows && grid[i][j] == grid[i][j + 1]) {
-        var old_group = group[i][j + 1];
+        var former_group = group[i][j + 1];
         for (var k = 0; k < rows; k++) {
           for (var l = 0; l < rows; l++) {
-            if (group[k][l] == old_group) {
+            if (group[k][l] == former_group) {
               group[k][l] = group[i][j];
             }
           }
         }
       }
       if ((i - 1) >= 0 && grid[i][j] == grid[i - 1][j]) {
-        var old_group = group[i - 1][j];
+        var former_group = group[i - 1][j];
         for (var k = 0; k < rows; k++) {
           for (var l = 0; l < rows; l++) {
-            if (group[k][l] == old_group) {
+            if (group[k][l] == former_group) {
               group[k][l] = group[i][j];
             }
           }
         }
       }
     }
+  }
+}
+
+function capture(x, y) {
+  if ((y - 1) >= 0 && grid[x][y - 1] != player) {
+    count_liberties(x, y - 1);
+  }
+  if ((x + 1) < rows && grid[x + 1][y] != player) {
+    count_liberties(x + 1, y);
+  }
+  if ((y + 1) < rows && grid[x][y + 1] != player) {
+    count_liberties(x, y + 1);
+  }
+  if ((x - 1) >= 0 && grid[x - 1][y] != player) {
+    count_liberties(x - 1, y);
   }
 }
 
@@ -223,7 +197,6 @@ function count_liberties(x, y) {
     }
   }
 
-  // No more liberty
   var lost_cells = 0;
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < rows; j++) {
