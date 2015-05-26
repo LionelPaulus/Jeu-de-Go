@@ -1,12 +1,15 @@
-// Variables
+//// Variables
 var rows = 9;
 var player = 1; // 1 = black, 2 = blue
 
+//// We declare the array's
+// group array -> contain the ID of the group for each row
 var group = new Array();
 for (var i = 0; i < rows; i++) {
   group[i] = new Array();
 }
 
+// grid array -> contain 1 or 2 based on player pawn for each row
 var grid = new Array();
 for (var i = 0; i < rows; i++) {
   grid[i] = new Array();
@@ -16,9 +19,11 @@ for (var i = 0; i < rows; i++) {
   }
 }
 
+//// Generate HTML
 generate_background();
 generate_cells();
 
+// HTML table
 function generate_background() {
   var background = '<table id="tableau"><tbody>';
   for (var a = 1; a < rows; a++) {
@@ -36,6 +41,7 @@ function generate_background() {
   document.getElementById("goban").innerHTML = '</tbody></table>' + background;
 }
 
+// Clickable DIV
 function generate_cells() {
   var goban = '';
 
@@ -58,20 +64,20 @@ function generate_cells() {
 
 }
 
+//// Onclick of the DIV
 function next_step(id) {
-  var x_y = id.indexOf("_");
-  var x = parseInt(id.substring(0, x_y));
-  var y = parseInt(id.substring(x_y + 1));
+  var x = parseInt(id.substring(0, id.indexOf("_"))); // Horizontal
+  var y = parseInt(id.substring(id.indexOf("_") + 1)); // Vertical
 
   if (grid[x][y] != 0 || suicide(x, y) == true) {
     console.log("Impossible de jouer ici !");
-    return;
   } else {
-    grid[x][y] = player;
-
+    grid[x][y] = player; // Add player pawn to array
     identify_groups();
     capture(x, y);
     update_html();
+
+    // Player alternation
     if (player == 1) {
       player = 2;
     } else {
@@ -80,9 +86,9 @@ function next_step(id) {
   }
 }
 
+// Detect if player is trying to commit suicide or not
 function suicide(x, y) {
     grid[x][y] = player;
-
     var suicide = true;
     identify_groups();
     var groupName = group[x][y];
@@ -101,17 +107,18 @@ function suicide(x, y) {
         return true;
         // The player is trying a suicide but we won't let him !
     }
-    return false;
 }
 
 
 function identify_groups() {
 
-  var group_id = 1;
+  var group_id = 1; // First group number
 
+  // We start by assigning a growing number to every pawn
   for (i = 0; i < rows; i++) {
     for (j = 0; j < rows; j++) {
       if (grid[i][j] == 0) {
+        // No pawn
         group[i][j] = 0;
       } else {
         group[i][j] = group_id;
@@ -120,9 +127,9 @@ function identify_groups() {
     }
   }
 
-
   for (i = 0; i < rows; i++) {
     for (j = 0; j < rows; j++) {
+      // Left
       if ((j - 1) >= 0 && grid[i][j] == grid[i][j - 1]) {
         var former_group = group[i][j - 1];
         for (var k = 0; k < rows; k++) {
@@ -133,6 +140,7 @@ function identify_groups() {
           }
         }
       }
+      // Down
       if ((i + 1) > rows && grid[i][j] == grid[i + 1][j]) {
         var former_group = group[i + 1][j];
         for (k = 0; k < rows; k++) {
@@ -143,6 +151,7 @@ function identify_groups() {
           }
         }
       }
+      // Right
       if ((j + 1) < rows && grid[i][j] == grid[i][j + 1]) {
         var former_group = group[i][j + 1];
         for (var k = 0; k < rows; k++) {
@@ -153,6 +162,7 @@ function identify_groups() {
           }
         }
       }
+      // Up
       if ((i - 1) >= 0 && grid[i][j] == grid[i - 1][j]) {
         var former_group = group[i - 1][j];
         for (var k = 0; k < rows; k++) {
@@ -168,15 +178,19 @@ function identify_groups() {
 }
 
 function capture(x, y) {
+  // Left
   if ((y - 1) >= 0 && grid[x][y - 1] != player) {
     count_liberties(x, y - 1);
   }
+  // Down
   if ((x + 1) < rows && grid[x + 1][y] != player) {
     count_liberties(x + 1, y);
   }
+  // Right
   if ((y + 1) < rows && grid[x][y + 1] != player) {
     count_liberties(x, y + 1);
   }
+  // Up
   if ((x - 1) >= 0 && grid[x - 1][y] != player) {
     count_liberties(x - 1, y);
   }
@@ -187,41 +201,49 @@ function capture(x, y) {
 function count_liberties(x, y) {
   identify_groups();
   var groupName = group[x][y];
+
+  // Detect if surrounded or not
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < rows; j++) {
-      if (group[i][j] == groupName && groupName != 0) {
+      if (groupName != 0 && group[i][j] == groupName) {
         if (((j - 1) >= 0 && grid[i][j - 1] == 0) || ((i + 1) < rows && grid[i + 1][j] == 0) || ((j + 1) < rows && grid[i][j + 1] == 0) || ((i - 1) >= 0 && grid[i - 1][j] == 0)) {
+          // Not surrounded -> we stop here
           return;
         }
       }
     }
   }
 
-  var lost_cells = 0;
+  var captured_cells = 0;
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < rows; j++) {
       if (group[i][j] == groupName) {
         grid[i][j] = 0;
-        console.log("grid["+i+"]["+j+"] = 0");
-        lost_cells += 1;
+        if(groupName > 0){
+          captured_cells += 1;
+        }
       }
     }
   }
-  console.log("Le joueur " + player + " a capturé " + lost_cells + " pierres à l'ennemi !");
-  lost_cells = 0;
+  if (captured_cells > 0) {
+    console.log("Le joueur " + player + " a capturé " + captured_cells + " cases à l'ennemi !");
+  }
+  captured_cells = 0;
 }
 
-
+//// Made changes visible on the HTML
 function update_html() {
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < rows; j++) {
+      // Empty
       if (grid[i][j] == 0) {
         var element = document.getElementById(i + "_" + j);
         element.setAttribute("class", "empty");
-      }
-      if (grid[i][j] == 1) {
+      // Player 1
+      } else if (grid[i][j] == 1) {
         var element = document.getElementById(i + "_" + j);
         element.setAttribute("class", "player1");
+      // Player 2
       } else if (grid[i][j] == 2) {
         var element = document.getElementById(i + "_" + j);
         element.setAttribute("class", "player2");
