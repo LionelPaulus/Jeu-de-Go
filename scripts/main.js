@@ -92,14 +92,44 @@ function suicide(x, y) {
     var suicide = true;
     identify_groups();
     var groupName = group[x][y];
+
+    // Detect if surrounded or not
     for (var i = 0; i < rows; i++) {
         for (var j = 0; j < rows; j++) {
             if (group[i][j] == groupName && groupName != 0) {
                 if (((j - 1) >= 0 && grid[i][j - 1] == 0) || ((i + 1) < rows && grid[i + 1][j] == 0) || ((j + 1) < rows && grid[i][j + 1] == 0) || ((i - 1) >= 0 && grid[i - 1][j] == 0)) {
+                    // Not surrounded -> no suicide
                     suicide = false;
                 }
             }
         }
+    }
+
+    // Detect if player is going to capture a pawn in "ATARI"
+    if ((x > 0)&&(x < rows-1)&&(y > 0)&&(y < rows-1)) {
+    // Left ATARI
+      if((grid[x-1][y-1] == player)&&(grid[x][y-2] == player)&&(grid[x+1][y-1]==player)){
+        suicide = false;
+        window.alert('LEFT ATARI');
+      }
+
+    // Right ATARI
+      if((grid[x+1][y+1] == player)&&(grid[x][y+2] == player)&&(grid[x-1][y+1]==player)){
+        suicide = false;
+        window.alert('RIGHT ATARI');
+      }
+
+    // Up ATARI
+      if((grid[x-1][y-1] == player)&&(grid[x-2][y] == player)&&(grid[x-1][y+1]==player)){
+        suicide = false;
+        window.alert('UP ATARI');
+      }
+
+    // Down ATARI
+      if((grid[x+1][y+1] == player)&&(grid[x+2][y] == player)&&(grid[x+1][y-1]==player)){
+        suicide = false;
+        window.alert('DOWN ATARI');
+      }
     }
 
     if (suicide == true) {
