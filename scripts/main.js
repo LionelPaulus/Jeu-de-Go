@@ -99,7 +99,7 @@ function suicide(x, y) {
     if (suicide == true) {
         grid[x][y] = 0;
         return true;
-        // The player tries a suicide but we won't let him !
+        // The player is trying a suicide but we won't let him !
     }
     return false;
 }
@@ -202,6 +202,7 @@ function count_liberties(x, y) {
     for (var j = 0; j < rows; j++) {
       if (group[i][j] == groupName) {
         grid[i][j] = 0;
+        console.log("grid["+i+"]["+j+"] = 0");
         lost_cells += 1;
       }
     }
