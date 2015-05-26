@@ -206,7 +206,7 @@ function count_liberties(x, y) {
       }
     }
   }
-  console.log("Le joueur " + player + " a capturé " + lost_cells + " cases à l'ennemi !");
+  console.log("Le joueur " + player + " a capturé " + lost_cells + " pierres à l'ennemi !");
   lost_cells = 0;
 }
 
