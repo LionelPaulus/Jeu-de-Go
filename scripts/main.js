@@ -127,25 +127,21 @@ function suicide(x, y) {
     // Left ATARI
       if((grid[x-1][y-1] == player)&&(grid[x][y-2] == player)&&(grid[x+1][y-1]==player)){
         suicide = false;
-        window.alert('LEFT ATARI');
       }
 
     // Right ATARI
       if((grid[x+1][y+1] == player)&&(grid[x][y+2] == player)&&(grid[x-1][y+1]==player)){
         suicide = false;
-        window.alert('RIGHT ATARI');
       }
 
     // Up ATARI
       if((grid[x-1][y-1] == player)&&(grid[x-2][y] == player)&&(grid[x-1][y+1]==player)){
         suicide = false;
-        window.alert('UP ATARI');
       }
 
     // Down ATARI
       if((grid[x+1][y+1] == player)&&(grid[x+2][y] == player)&&(grid[x+1][y-1]==player)){
         suicide = false;
-        window.alert('DOWN ATARI');
       }
     }
 
@@ -299,4 +295,18 @@ function update_html() {
             }
         }
     }
+}
+
+function save_game(){
+  var game_state = JSON.stringify(grid);
+  localStorage.setItem('game_state',game_state);
+}
+
+function reload_game(){
+  if(localStorage.getItem('game_state') == null){
+    window.alert("Aucun état de jeu sauvegardé !");
+  }else{
+    grid = JSON.parse(localStorage.getItem('game_state'));
+    update_html();
+  }
 }
