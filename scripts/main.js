@@ -90,10 +90,6 @@ function next_step(id) {
         console.log("Impossible de jouer ici !");
     } else {
         grid[x][y] = player; // Add player pawn to array
-    
-        if (ko(former_grid, grid, x, y) == true) {
-            console.log("kokomoncoco tu peux pas jouer ici");
-        } else {
             identify_groups();
             capture(x, y);
             update_html();
@@ -106,7 +102,6 @@ function next_step(id) {
             }
         }
     }
-}
 
 // Detect if player is trying to commit suicide or not
 function suicide(x, y) {
@@ -304,29 +299,4 @@ function update_html() {
             }
         }
     }
-}
-
-function ko(former_grid, next_grid, x, y) {
-    var change = 0;
-    for (g = 0; g < rows; g++) {
-        for (h = 0; h < rows; h++) {
-            if (next_grid[g][h] != former_grid[g][h]) {
-                change += 1;
-            } else {
-                change = change;
-            }
-        }
-    }
-
-        if (change != 0) {
-            return false;
-        } else {
-            next_grid[x][y]=0;
-            return true;
-        }
-        
-        
-    
-    
-
 }
