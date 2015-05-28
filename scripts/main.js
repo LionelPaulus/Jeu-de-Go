@@ -1,4 +1,5 @@
 //// Variables
+var tour = 0;
 var rows = 9;
 var player = 1; // 1 = black, 2 = blue
 
@@ -68,7 +69,6 @@ function generate_cells() {
 function next_step(id) {
     var x = parseInt(id.substring(0, id.indexOf("_"))); // Horizontal
     var y = parseInt(id.substring(id.indexOf("_") + 1)); // Vertical
-    var tour = 0;
     
     var former_grid = new Array();
         for (var i = 0; i < rows; i++) {
@@ -94,6 +94,7 @@ function next_step(id) {
             capture(x, y);
             update_html();
             tour += 1;
+            console.log(tour);
             // Player alternation
             if (player == 1) {
                 player = 2;
@@ -121,8 +122,7 @@ function suicide(x, y) {
             }
         }
     }
-
-    // Detect if player is going to capture a pawn in "ATARI"
+       // Detect if player is going to capture a pawn in "ATARI"
     if ((x > 0)&&(x < rows-1)&&(y > 0)&&(y < rows-1)) {
     // Left ATARI
       if((grid[x-1][y-1] == player)&&(grid[x][y-2] == player)&&(grid[x+1][y-1]==player)){
