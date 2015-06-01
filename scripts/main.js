@@ -2,7 +2,7 @@
 var tour = 0;
 var rows = 9;
 var player = 1; // 1 = black, 2 = blue
-
+var atari = 0;
 //// We declare the array's
 // group array -> contain the ID of the group for each row
 var group = new Array();
@@ -69,14 +69,14 @@ function generate_cells() {
 function next_step(id) {
     var x = parseInt(id.substring(0, id.indexOf("_"))); // Horizontal
     var y = parseInt(id.substring(id.indexOf("_") + 1)); // Vertical
-    
+
     var former_grid = new Array();
-        for (var i = 0; i < rows; i++) {
-            former_grid[i] = new Array();
-            for (var j = 0; j < rows; j++) {
-                former_grid[i][j] = new Array();
-            }
+    for (var i = 0; i < rows; i++) {
+        former_grid[i] = new Array();
+        for (var j = 0; j < rows; j++) {
+            former_grid[i][j] = new Array();
         }
+    }
 
     if ((tour % 2) == 0) {
         for (var i = 0; i < rows; i++) {
@@ -88,21 +88,24 @@ function next_step(id) {
 
     if (grid[x][y] != 0 || suicide(x, y) == true) {
         console.log("Impossible de jouer ici !");
+        return;
     } else {
         grid[x][y] = player; // Add player pawn to array
-            identify_groups();
-            capture(x, y);
-            update_html();
-            tour += 1;
-            console.log(tour);
-            // Player alternation
-            if (player == 1) {
-                player = 2;
-            } else {
-                player = 1;
-            }
+        identify_groups();
+        capture(x, y);
+        var stock = 0;
+        liberties(x, y, stock);
+        update_html();
+        tour += 1;
+        console.log(tour);
+        // Player alternation
+        if (player == 1) {
+            player = 2;
+        } else {
+            player = 1;
         }
     }
+}
 
 // Detect if player is trying to commit suicide or not
 function suicide(x, y) {
@@ -122,27 +125,28 @@ function suicide(x, y) {
             }
         }
     }
-       // Detect if player is going to capture a pawn in "ATARI"
-    if ((x > 0)&&(x < rows-1)&&(y > 0)&&(y < rows-1)) {
-    // Left ATARI
-      if((grid[x-1][y-1] == player)&&(grid[x][y-2] == player)&&(grid[x+1][y-1]==player)){
-        suicide = false;
-      }
+    // Detect if player is going to capture a pawn in "ATARI"
 
-    // Right ATARI
-      if((grid[x+1][y+1] == player)&&(grid[x][y+2] == player)&&(grid[x-1][y+1]==player)){
-        suicide = false;
-      }
+    if ((x > 0) && (x < rows - 1) && (y > 0) && (y < rows - 1)) {
+        // Left ATARI
+        if ((grid[x - 1][y - 1] == player) && (grid[x][y - 2] == player) && (grid[x + 1][y - 1] == player)) {
+            suicide = false;
+        }
 
-    // Up ATARI
-      if((grid[x-1][y-1] == player)&&(grid[x-2][y] == player)&&(grid[x-1][y+1]==player)){
-        suicide = false;
-      }
+        // Right ATARI
+        if ((grid[x + 1][y + 1] == player) && (grid[x][y + 2] == player) && (grid[x - 1][y + 1] == player)) {
+            suicide = false;
+        }
 
-    // Down ATARI
-      if((grid[x+1][y+1] == player)&&(grid[x+2][y] == player)&&(grid[x+1][y-1]==player)){
-        suicide = false;
-      }
+        // Up ATARI
+        if ((grid[x - 1][y - 1] == player) && (grid[x - 2][y] == player) && (grid[x - 1][y + 1] == player)) {
+            suicide = false;
+        }
+
+        // Down ATARI
+        if ((grid[x + 1][y + 1] == player) && (grid[x + 2][y] == player) && (grid[x + 1][y - 1] == player)) {
+            suicide = false;
+        }
     }
 
     if (suicide == true) {
@@ -151,7 +155,6 @@ function suicide(x, y) {
         // The player is trying a suicide but we won't let him !
     }
 }
-
 
 function identify_groups() {
 
@@ -237,8 +240,6 @@ function capture(x, y) {
     if ((x - 1) >= 0 && grid[x - 1][y] != player) {
         count_liberties(x - 1, y);
     }
-    
-    console.log("capture");
 }
 
 
@@ -246,7 +247,6 @@ function capture(x, y) {
 function count_liberties(x, y) {
     identify_groups();
     var groupName = group[x][y];
-
     // Detect if surrounded or not
     for (var i = 0; i < rows; i++) {
         for (var j = 0; j < rows; j++) {
@@ -297,16 +297,64 @@ function update_html() {
     }
 }
 
-function save_game(){
-  var game_state = JSON.stringify(grid);
-  localStorage.setItem('game_state',game_state);
+function save_game() {
+    var game_state = JSON.stringify(grid);
+    localStorage.setItem('game_state', game_state);
 }
 
-function reload_game(){
-  if(localStorage.getItem('game_state') == null){
-    window.alert("Aucun état de jeu sauvegardé !");
-  }else{
-    grid = JSON.parse(localStorage.getItem('game_state'));
-    update_html();
-  }
+function reload_game() {
+    if (localStorage.getItem('game_state') == null) {
+        window.alert("Aucun état de jeu sauvegardé !");
+    } else {
+        grid = JSON.parse(localStorage.getItem('game_state'));
+        update_html();
+    }
 }
+
+function liberties(i, j, liberte_stock) {
+    
+    
+        identify_groups();
+        var former_i = i;
+        var former_j = j;
+        console.log(group[i][j]);
+        var liberte = 0;
+        var groupName = group[i][j];
+        if ((j - 1) >= 0 && grid[i][j - 1] == 0) {
+            liberte = liberte + 1;
+        }
+        if ((i + 1) < rows && grid[i + 1][j] == 0) {
+            liberte = liberte + 1;
+        }
+        if ((j + 1) < rows && grid[i][j + 1] == 0) {
+            liberte = liberte + 1;
+        }
+        if ((i - 1) >= 0 && grid[i - 1][j] == 0) {
+            liberte = liberte + 1;
+        }
+        liberte_stock = liberte_stock + liberte;
+        console.log("lib" + liberte);
+        console.log(i + "_" + j + "libstock" + liberte_stock);
+
+        if (((group[i][j - 1] != 0) || (group[i][j + 1] != 0) || (group[i - 1][j] != 0) || (group[i + 1][j] != 0)) && ((group[i][j - 1] != undefined) || (group[i][j + 1] != undefined) || (group[i - 1][j] != undefined) || (group[i + 1][j] != undefined))) {
+                if (group[i][j - 1] == groupName) {
+                    liberties(i, j - 1, liberte_stock);
+                    liberte_stock = liberte_stock + liberte;
+                }
+                if (group[i][j + 1] == groupName) {
+                    liberties(i, j + 1, liberte_stock);
+                    liberte_stock = liberte_stock + liberte;
+                }
+                if (group[i - 1][j] == groupName) {
+                    liberties(i - 1, j, liberte_stock);
+                    liberte_stock = liberte_stock + liberte;
+                }
+                if (group[i + 1][j - 1] == groupName) {
+                    liberties(i + 1, j, liberte_stock);
+                    liberte_stock = liberte_stock + liberte;
+                }
+            } else {
+                console.log(i + "_" + j + "libstock" + liberte_stock);
+                return liberte_stock;
+            }
+        }
