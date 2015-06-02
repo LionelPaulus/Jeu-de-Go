@@ -312,49 +312,47 @@ function reload_game() {
 }
 
 function liberties(i, j, liberte_stock) {
+    identify_groups();
+    var groupName = group[i][j];
+    var liberte = 0;
+    if ((j - 1) >= 0 && grid[i][j - 1] == 0) {
+        liberte = liberte + 1;
+    }
+    if ((i + 1) < rows && grid[i + 1][j] == 0) {
+        liberte = liberte + 1;
+    }
+    if ((j + 1) < rows && grid[i][j + 1] == 0) {
+        liberte = liberte + 1;
+    }
+    if ((i - 1) >= 0 && grid[i - 1][j] == 0) {
+        liberte = liberte + 1;
+    }
     
-    
-        identify_groups();
-        var former_i = i;
-        var former_j = j;
-        console.log(group[i][j]);
-        var liberte = 0;
-        var groupName = group[i][j];
-        if ((j - 1) >= 0 && grid[i][j - 1] == 0) {
-            liberte = liberte + 1;
-        }
-        if ((i + 1) < rows && grid[i + 1][j] == 0) {
-            liberte = liberte + 1;
-        }
-        if ((j + 1) < rows && grid[i][j + 1] == 0) {
-            liberte = liberte + 1;
-        }
-        if ((i - 1) >= 0 && grid[i - 1][j] == 0) {
-            liberte = liberte + 1;
-        }
-        liberte_stock = liberte_stock + liberte;
-        console.log("lib" + liberte);
-        console.log(i + "_" + j + "libstock" + liberte_stock);
+    liberte_stock = liberte+liberte_stock;
 
-        if (((group[i][j - 1] != 0) || (group[i][j + 1] != 0) || (group[i - 1][j] != 0) || (group[i + 1][j] != 0)) && ((group[i][j - 1] != undefined) || (group[i][j + 1] != undefined) || (group[i - 1][j] != undefined) || (group[i + 1][j] != undefined))) {
-                if (group[i][j - 1] == groupName) {
-                    liberties(i, j - 1, liberte_stock);
-                    liberte_stock = liberte_stock + liberte;
-                }
-                if (group[i][j + 1] == groupName) {
-                    liberties(i, j + 1, liberte_stock);
-                    liberte_stock = liberte_stock + liberte;
-                }
-                if (group[i - 1][j] == groupName) {
-                    liberties(i - 1, j, liberte_stock);
-                    liberte_stock = liberte_stock + liberte;
-                }
-                if (group[i + 1][j - 1] == groupName) {
-                    liberties(i + 1, j, liberte_stock);
-                    liberte_stock = liberte_stock + liberte;
-                }
-            } else {
-                console.log(i + "_" + j + "libstock" + liberte_stock);
-                return liberte_stock;
-            }
+    
+    console.log("lib" + liberte);
+    console.log(i + "_" + j + "libstock" + liberte_stock);
+
+    if (group[i][j - 1] != 0 || group[i][j + 1] != 0 || group[i - 1][j] != 0 || group[i + 1][j] != 0) {
+        if (group[i][j - 1] == groupName) {
+            liberties(i, (j - 1), liberte_stock);
+            liberte_stock = liberte_stock + liberte;
         }
+        if (group[i][j + 1] == groupName) {
+            liberties(i, (j + 1), liberte_stock);
+            liberte_stock = liberte_stock + liberte;
+        }
+        if (group[i - 1][j] == groupName) {
+            liberties((i - 1), j, liberte_stock);
+            liberte_stock = liberte_stock + liberte;
+        }
+        if (group[i + 1][j] == groupName) {
+            liberties((i + 1), j, liberte_stock);
+            liberte_stock = liberte_stock + liberte;
+        }
+    } else {
+        console.log(i + "_" + j + "libstock" + liberte_stock);  
+        return;
+    }
+}
