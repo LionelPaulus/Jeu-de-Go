@@ -94,7 +94,8 @@ function next_step(id) {
         identify_groups();
         capture(x, y);
         var stock = 0;
-        liberties(x, y, stock);
+        var groupeEnCours=new Array();
+        liberties(x, y, stock,groupeEnCours);
         update_html();
         tour += 1;
         console.log(tour);
@@ -311,10 +312,12 @@ function reload_game() {
     }
 }
 
-function liberties(i, j, liberte_stock) {
+
+function liberties(i, j, liberte_stock, groupeEnCours) {
     identify_groups();
     var groupName = group[i][j];
-    var liberte = 0;
+    groupeEnCours[groupeEnCours.length]=i+"_"+j;
+    var liberte = 0;  // On compte les libertés individuelles
     if ((j - 1) >= 0 && grid[i][j - 1] == 0) {
         liberte = liberte + 1;
     }
@@ -327,32 +330,46 @@ function liberties(i, j, liberte_stock) {
     if ((i - 1) >= 0 && grid[i - 1][j] == 0) {
         liberte = liberte + 1;
     }
-    
-    liberte_stock = liberte+liberte_stock;
 
-    
+    liberte_stock = liberte + liberte_stock; // On additionne les libertés de la case étudiée aux libertés du groupe
+
+
     console.log("lib" + liberte);
     console.log(i + "_" + j + "libstock" + liberte_stock);
+    
+    // On cherche les cellules du même groupe pour chercher leurs libertés
 
     if (group[i][j - 1] != 0 || group[i][j + 1] != 0 || group[i - 1][j] != 0 || group[i + 1][j] != 0) {
-        if (group[i][j - 1] == groupName) {
-            liberties(i, (j - 1), liberte_stock);
+        if (group[i][j - 1] == groupName && !inArray(groupeEnCours, i+"_"+(j-1)) ) {
+            liberties(i, (j - 1), liberte_stock,groupeEnCours);
             liberte_stock = liberte_stock + liberte;
         }
-        if (group[i][j + 1] == groupName) {
-            liberties(i, (j + 1), liberte_stock);
+        if (group[i][j + 1] == groupName && !inArray(groupeEnCours, i+"_"+(j+1)) ) {
+            liberties(i, (j + 1), liberte_stock,groupeEnCours);
             liberte_stock = liberte_stock + liberte;
         }
-        if (group[i - 1][j] == groupName) {
-            liberties((i - 1), j, liberte_stock);
+        if (group[i - 1][j] == groupName && !inArray(groupeEnCours, (i-1)+"_"+j) ) {
+            liberties((i - 1), j, liberte_stock,groupeEnCours);
             liberte_stock = liberte_stock + liberte;
         }
-        if (group[i + 1][j] == groupName) {
-            liberties((i + 1), j, liberte_stock);
+        if (group[i + 1][j] == groupName && !inArray(groupeEnCours, (i+1)+"_"+j))  {
+            liberties((i + 1), j, liberte_stock,groupeEnCours);
             liberte_stock = liberte_stock + liberte;
         }
-    } else {
-        console.log(i + "_" + j + "libstock" + liberte_stock);  
+    } else{
+        console.log(i + "_" + j + "libstock" + liberte_stock);
         return;
     }
+}
+
+function inArray(tableau,element)
+{
+    for(var i=0;i<tableau.length;i++)
+    {
+        if(tableau[i]==element)
+        {
+            return true;
+        }
+    }
+    return false;
 }
