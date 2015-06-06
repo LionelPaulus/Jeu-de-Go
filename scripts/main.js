@@ -329,7 +329,6 @@ function reload_game() {
 
 function liberties(x, y, liberte_stock, groupeEnCours, liberties_already_counted) {
   identify_groups();
-  console.log("group[" + x + "][" + y + "]");
   var groupName = group[x][y];
   groupeEnCours[groupeEnCours.length] = x + "_" + y;
   var liberte = 0; // On compte les libertés individuelles
