@@ -96,7 +96,25 @@ function next_step(id) {
     var stock = 0;
     var groupeEnCours = [];
     var liberties_already_counted = [];
+    //// We start the function liberties
+    // For the clicked case
     liberties(x, y, stock, groupeEnCours, liberties_already_counted);
+    // For the left case
+    if (((x - 1) >= 0) && ((x - 1) < rows)) {
+      liberties((x - 1), y, stock, groupeEnCours, liberties_already_counted);
+    }
+    // For the right case
+    if (((x + 1) >= 0) && ((x + 1) < rows)) {
+      liberties((x + 1), y, stock, groupeEnCours, liberties_already_counted);
+    }
+    // For the up case
+    if (((y - 1) >= 0) && ((y - 1) < rows)) {
+      liberties(x, (y - 1), stock, groupeEnCours, liberties_already_counted);
+    }
+    // For the bottom case
+    if (((y + 1) >= 0) && ((y + 1) < rows)) {
+      liberties(x, (y + 1), stock, groupeEnCours, liberties_already_counted);
+    }
     update_html();
     tour += 1;
     // Player alternation
@@ -132,19 +150,16 @@ function suicide(x, y) {
     if ((grid[x - 1][y - 1] == player) && (grid[x][y - 2] == player) && (grid[x + 1][y - 1] == player)) {
       suicide = false;
     }
-
     // Right ATARI
-    if ((grid[x + 1][y + 1] == player) && (grid[x][y + 2] == player) && (grid[x - 1][y + 1] == player)) {
+    else if ((grid[x + 1][y + 1] == player) && (grid[x][y + 2] == player) && (grid[x - 1][y + 1] == player)) {
       suicide = false;
     }
-
     // Up ATARI
-    if ((grid[x - 1][y - 1] == player) && (grid[x - 2][y] == player) && (grid[x - 1][y + 1] == player)) {
+    else if ((grid[x - 1][y - 1] == player) && (grid[x - 2][y] == player) && (grid[x - 1][y + 1] == player)) {
       suicide = false;
     }
-
     // Down ATARI
-    if ((grid[x + 1][y + 1] == player) && (grid[x + 2][y] == player) && (grid[x + 1][y - 1] == player)) {
+    else if ((grid[x + 1][y + 1] == player) && (grid[x + 2][y] == player) && (grid[x + 1][y - 1] == player)) {
       suicide = false;
     }
   }
@@ -226,19 +241,19 @@ function identify_groups() {
 function capture(x, y) {
   // Left
   if ((y - 1) >= 0 && grid[x][y - 1] != player) {
-    count_liberties(x, y - 1);
+    count_liberties(x, (y - 1));
   }
   // Down
   if ((x + 1) < rows && grid[x + 1][y] != player) {
-    count_liberties(x + 1, y);
+    count_liberties((x + 1), y);
   }
   // Right
   if ((y + 1) < rows && grid[x][y + 1] != player) {
-    count_liberties(x, y + 1);
+    count_liberties(x, (y + 1));
   }
   // Up
   if ((x - 1) >= 0 && grid[x - 1][y] != player) {
-    count_liberties(x - 1, y);
+    count_liberties((x - 1), y);
   }
 }
 
@@ -312,48 +327,48 @@ function reload_game() {
 }
 
 
-function liberties(i, j, liberte_stock, groupeEnCours, liberties_already_counted) {
+function liberties(x, y, liberte_stock, groupeEnCours, liberties_already_counted) {
   identify_groups();
-  var groupName = group[i][j];
-  groupeEnCours[groupeEnCours.length] = i + "_" + j;
+  console.log("group[" + x + "][" + y + "]");
+  var groupName = group[x][y];
+  groupeEnCours[groupeEnCours.length] = x + "_" + y;
   var liberte = 0; // On compte les libertés individuelles
-  if (((j - 1) >= 0 && grid[i][j - 1] == 0) && (!inArray(liberties_already_counted, i + "_" + (j - 1)))) {
+  if (((y - 1) >= 0 && grid[x][y - 1] == 0) && (!inArray(liberties_already_counted, x + "_" + (y - 1)))) {
     liberte = liberte + 1;
-    liberties_already_counted[liberties_already_counted.length] = i + "_" + (j - 1);
+    liberties_already_counted[liberties_already_counted.length] = x + "_" + (y - 1);
   }
-  if (((i + 1) < rows && grid[i + 1][j] == 0) && (!inArray(liberties_already_counted, (i + 1) + "_" + j))) {
+  if (((x + 1) < rows && grid[x + 1][y] == 0) && (!inArray(liberties_already_counted, (x + 1) + "_" + y))) {
     liberte = liberte + 1;
-    liberties_already_counted[liberties_already_counted.length] = (i + 1) + "_" + j;
+    liberties_already_counted[liberties_already_counted.length] = (x + 1) + "_" + y;
   }
-  if (((j + 1) < rows && grid[i][j + 1] == 0) && (!inArray(liberties_already_counted, i + "_" + (j + 1)))) {
+  if (((y + 1) < rows && grid[x][y + 1] == 0) && (!inArray(liberties_already_counted, x + "_" + (y + 1)))) {
     liberte = liberte + 1;
-    liberties_already_counted[liberties_already_counted.length] = i + "_" + (j + 1);
+    liberties_already_counted[liberties_already_counted.length] = x + "_" + (y + 1);
   }
-  if (((i - 1) >= 0 && grid[i - 1][j] == 0) && (!inArray(liberties_already_counted, (i - 1) + "_" + j))) {
+  if (((x - 1) >= 0 && grid[x - 1][y] == 0) && (!inArray(liberties_already_counted, (x - 1) + "_" + y))) {
     liberte = liberte + 1;
-    liberties_already_counted[liberties_already_counted.length] = (i - 1) + "_" + j;
+    liberties_already_counted[liberties_already_counted.length] = (x - 1) + "_" + y;
   }
 
   liberte_stock += liberte; // On additionne les libertés de la case étudiée aux libertés du groupe
-  console.log(liberte_stock);
+  return liberte_stock;
 
   // On cherche les cellules du même groupe pour chercher leurs libertés
-
-  if (group[i][j - 1] != 0 || group[i][j + 1] != 0 || group[i - 1][j] != 0 || group[i + 1][j] != 0) {
-    if (((j - 1) >= 0 && group[i][j - 1] == groupName) && (!inArray(groupeEnCours, i + "_" + (j - 1)))) {
-      liberties(i, (j - 1), liberte_stock, groupeEnCours, liberties_already_counted);
+  if ((group[x][y - 1] && group[x][y - 1] != 0) || (group[x][y + 1] && group[x][y + 1] != 0) || (group[x - 1] && group[x - 1][y] != 0) || (group[x + 1] && group[x + 1][y] != 0)) {
+    if (((y - 1) >= 0 && group[x][y - 1] == groupName) && (!inArray(groupeEnCours, x + "_" + (y - 1)))) {
+      liberties(x, (y - 1), liberte_stock, groupeEnCours, liberties_already_counted);
       liberte_stock = liberte_stock + liberte;
     }
-    if (((j + 1) < rows && group[i][j + 1] == groupName) && !inArray(groupeEnCours, i + "_" + (j + 1))) {
-      liberties(i, (j + 1), liberte_stock, groupeEnCours, liberties_already_counted);
+    if (((y + 1) < rows && group[x][y + 1] == groupName) && !inArray(groupeEnCours, x + "_" + (y + 1))) {
+      liberties(x, (y + 1), liberte_stock, groupeEnCours, liberties_already_counted);
       liberte_stock = liberte_stock + liberte;
     }
-    if (((i - 1) >= 0 && group[i - 1][j] == groupName) && (!inArray(groupeEnCours, (i - 1) + "_" + j))) {
-      liberties((i - 1), j, liberte_stock, groupeEnCours, liberties_already_counted);
+    if (((x - 1) >= 0 && group[x - 1][y] == groupName) && (!inArray(groupeEnCours, (x - 1) + "_" + y))) {
+      liberties((x - 1), y, liberte_stock, groupeEnCours, liberties_already_counted);
       liberte_stock = liberte_stock + liberte;
     }
-    if (((i + 1) < rows && group[i + 1][j] == groupName) && (!inArray(groupeEnCours, (i + 1) + "_" + j))) {
-      liberties((i + 1), j, liberte_stock, groupeEnCours, liberties_already_counted);
+    if (((x + 1) < rows && group[x + 1][y] == groupName) && (!inArray(groupeEnCours, (x + 1) + "_" + y))) {
+      liberties((x + 1), y, liberte_stock, groupeEnCours, liberties_already_counted);
       liberte_stock = liberte_stock + liberte;
     }
   }
