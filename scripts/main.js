@@ -326,6 +326,40 @@ function reload_game() {
   }
 }
 
+function count_liberties_by_group (x, y){
+  //identify_groups();
+  var groupName = group[x][y];
+
+  if(groupName == 0){
+    return "Aucun pion à cet endroit.";
+  }
+
+  var liberte = 0; // On compte les libertés individuelles
+
+  for (x = 0; x < group.length; x++) {
+    for (y = 0; y < group.length; y++) {
+      if (group[x][y] == groupName) {
+        //// We check every corner
+        if(typeof(grid[x + 1]) != "undefined" && grid[x + 1][y] == 0){
+          liberte += 1;
+        }
+
+        if(typeof(grid[x - 1]) != "undefined" && grid[x - 1][y] == 0){
+          liberte += 1;
+        }
+
+        if(typeof(grid[x][y + 1]) != "undefined" && grid[x][y + 1] == 0){
+          liberte += 1;
+        }
+
+        if(typeof(grid[x][y - 1]) != "undefined" && grid[x][y - 1] == 0){
+          liberte += 1;
+        }
+      }
+    }
+  }
+  return liberte;
+}
 
 function liberties(x, y, liberte_stock, groupeEnCours, liberties_already_counted) {
   identify_groups();
@@ -350,7 +384,6 @@ function liberties(x, y, liberte_stock, groupeEnCours, liberties_already_counted
   }
 
   liberte_stock += liberte; // On additionne les libertés de la case étudiée aux libertés du groupe
-  return liberte_stock;
 
   // On cherche les cellules du même groupe pour chercher leurs libertés
   if ((group[x][y - 1] && group[x][y - 1] != 0) || (group[x][y + 1] && group[x][y + 1] != 0) || (group[x - 1] && group[x - 1][y] != 0) || (group[x + 1] && group[x + 1][y] != 0)) {
@@ -371,6 +404,7 @@ function liberties(x, y, liberte_stock, groupeEnCours, liberties_already_counted
       liberte_stock = liberte_stock + liberte;
     }
   }
+  return liberte_stock;
 }
 
 function inArray(tableau, element) {
