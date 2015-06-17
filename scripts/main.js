@@ -2,7 +2,6 @@
 var tour = 0;
 var rows = 9;
 var player = 1;
-
 //// We declare the array's
 // group array -> contain the ID of the group for each row
 var group = new Array();
@@ -102,16 +101,16 @@ function next_step(id) {
       player = 1;
     }
     atari(x,y);
-    if(typeof(grid[x+1][y]) != undefined){
+    if( x+1 <= 8){
             atari(x+1,y);
        }
-    if(typeof(grid[x-1][y]) != undefined){
+    if( x-1 >= 0 ){
             atari(x-1,y);
        }
-    if(typeof(grid[x][y+1]) != undefined){
+    if( y+1 <= 8 ){
             atari(x,y+1);
        }
-    if(typeof(grid[x][y-1]) != undefined){
+    if( y-1 >= 0){
             atari(x,y-1);
        }
   }
