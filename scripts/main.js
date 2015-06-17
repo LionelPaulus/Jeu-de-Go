@@ -101,6 +101,19 @@ function next_step(id) {
     } else {
       player = 1;
     }
+    atari(x,y);
+    if(typeof(grid[x+1][y]) != undefined){
+            atari(x+1,y);
+       }
+    if(typeof(grid[x-1][y]) != undefined){
+            atari(x-1,y);
+       }
+    if(typeof(grid[x][y+1]) != undefined){
+            atari(x,y+1);
+       }
+    if(typeof(grid[x][y-1]) != undefined){
+            atari(x,y-1);
+       }
   }
 }
 // Detect if player is trying to commit suicide or not
@@ -119,26 +132,6 @@ function suicide(x, y) {
           suicide = false;
         }
       }
-    }
-  }
-  // Detect if player is going to capture a pawn in "ATARI"
-
-  if ((x > 0) && (x < rows - 1) && (y > 0) && (y < rows - 1)) {
-    // Left ATARI
-    if ((grid[x - 1][y - 1] == player) && (grid[x][y - 2] == player) && (grid[x + 1][y - 1] == player)) {
-      suicide = false;
-    }
-    // Right ATARI
-    else if ((grid[x + 1][y + 1] == player) && (grid[x][y + 2] == player) && (grid[x - 1][y + 1] == player)) {
-      suicide = false;
-    }
-    // Up ATARI
-    else if ((grid[x - 1][y - 1] == player) && (grid[x - 2][y] == player) && (grid[x - 1][y + 1] == player)) {
-      suicide = false;
-    }
-    // Down ATARI
-    else if ((grid[x + 1][y + 1] == player) && (grid[x + 2][y] == player) && (grid[x + 1][y - 1] == player)) {
-      suicide = false;
     }
   }
 
@@ -350,4 +343,10 @@ function inArray(tableau, element) {
     }
   }
   return false;
+}
+
+function atari(x,y) {
+    if(liberties(x,y) == 1){
+        window.alert("ATARI en " + x + "/" + y);
+    }
 }
