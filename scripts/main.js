@@ -2,6 +2,8 @@
 var tour = 0;
 var rows = 9;
 var player = 1;
+var game_history = [];
+
 //// We declare the array's
 // group array -> contain the ID of the group for each row
 var group = new Array();
@@ -89,30 +91,31 @@ function next_step(id) {
     console.log("Impossible de jouer ici !");
     return;
   } else {
-    grid[x][y] = player; // Add player pawn to array
-    identify_groups();
-    capture(x, y);
-    update_html();
-    tour += 1;
-    // Player alternation
-    if (player == 1) {
-      player = 2;
-    } else {
-      player = 1;
+    if (once_but_not_two(x, y) == false) {
+      identify_groups();
+      capture(x, y);
+      update_html();
+      tour += 1;
+      // Player alternation
+      if (player == 1) {
+        player = 2;
+      } else {
+        player = 1;
+      }
+      atari(x, y);
+      if (x + 1 <= 8) {
+        atari(x + 1, y);
+      }
+      if (x - 1 >= 0) {
+        atari(x - 1, y);
+      }
+      if (y + 1 <= 8) {
+        atari(x, y + 1);
+      }
+      if (y - 1 >= 0) {
+        atari(x, y - 1);
+      }
     }
-    atari(x,y);
-    if( x+1 <= 8){
-            atari(x+1,y);
-       }
-    if( x-1 >= 0 ){
-            atari(x-1,y);
-       }
-    if( y+1 <= 8 ){
-            atari(x,y+1);
-       }
-    if( y-1 >= 0){
-            atari(x,y-1);
-       }
   }
 }
 // Detect if player is trying to commit suicide or not
@@ -131,6 +134,26 @@ function suicide(x, y) {
           suicide = false;
         }
       }
+    }
+  }
+
+  // Detect if player is going to capture a pawn in "ATARI"
+  if ((x > 0) && (x < rows - 1) && (y > 0) && (y < rows - 1)) {
+    // Left ATARI
+    if ((grid[x - 1][y - 1] == player) && (grid[x][y - 2] == player) && (grid[x + 1][y - 1] == player)) {
+      suicide = false;
+    }
+    // Right ATARI
+    else if ((grid[x + 1][y + 1] == player) && (grid[x][y + 2] == player) && (grid[x - 1][y + 1] == player)) {
+      suicide = false;
+    }
+    // Up ATARI
+    else if ((grid[x - 1][y - 1] == player) && (grid[x - 2][y] == player) && (grid[x - 1][y + 1] == player)) {
+      suicide = false;
+    }
+    // Down ATARI
+    else if ((grid[x + 1][y + 1] == player) && (grid[x + 2][y] == player) && (grid[x + 1][y - 1] == player)) {
+      suicide = false;
     }
   }
 
@@ -296,10 +319,10 @@ function reload_game() {
   }
 }
 
-function liberties (x, y){
+function liberties(x, y) {
   var groupName = group[x][y];
 
-  if(groupName == 0){
+  if (groupName == 0) {
     return "Aucun pion à cet endroit.";
   }
 
@@ -310,22 +333,22 @@ function liberties (x, y){
     for (y = 0; y < group.length; y++) {
       if (group[x][y] == groupName) {
         //// We check each side
-        if((typeof(grid[x + 1]) != "undefined" && grid[x + 1][y] == 0) && (!inArray(liberties_already_counted, (x + 1) + "_" + y))){
+        if ((typeof(grid[x + 1]) != "undefined" && grid[x + 1][y] == 0) && (!inArray(liberties_already_counted, (x + 1) + "_" + y))) {
           liberties_already_counted[liberties_already_counted.length] = (x + 1) + "_" + y;
           liberte += 1;
         }
 
-        if((typeof(grid[x - 1]) != "undefined" && grid[x - 1][y] == 0) && (!inArray(liberties_already_counted, (x - 1) + "_" + y))){
+        if ((typeof(grid[x - 1]) != "undefined" && grid[x - 1][y] == 0) && (!inArray(liberties_already_counted, (x - 1) + "_" + y))) {
           liberties_already_counted[liberties_already_counted.length] = (x - 1) + "_" + y;
           liberte += 1;
         }
 
-        if((typeof(grid[x][y + 1]) != "undefined" && grid[x][y + 1] == 0) && (!inArray(liberties_already_counted, x + "_" + (y + 1)))){
+        if ((typeof(grid[x][y + 1]) != "undefined" && grid[x][y + 1] == 0) && (!inArray(liberties_already_counted, x + "_" + (y + 1)))) {
           liberties_already_counted[liberties_already_counted.length] = x + "_" + (y + 1);
           liberte += 1;
         }
 
-        if((typeof(grid[x][y - 1]) != "undefined" && grid[x][y - 1] == 0) && (!inArray(liberties_already_counted, x + "_" + (y - 1)))){
+        if ((typeof(grid[x][y - 1]) != "undefined" && grid[x][y - 1] == 0) && (!inArray(liberties_already_counted, x + "_" + (y - 1)))) {
           liberties_already_counted[liberties_already_counted.length] = x + "_" + (y - 1);
           liberte += 1;
         }
@@ -344,8 +367,20 @@ function inArray(tableau, element) {
   return false;
 }
 
-function atari(x,y) {
-    if(liberties(x,y) == 1){
-        window.alert("ATARI en " + x + "/" + y);
-    }
+function atari(x, y) {
+  if (liberties(x, y) == 1) {
+    window.alert("ATARI en " + x + "/" + y);
+  }
+}
+
+function once_but_not_two(x, y) {
+  game_history[tour] = [];
+  game_history[tour]["state"] = JSON.stringify(grid);
+  grid[x][y] = player; // Add player pawn to array
+  if ((tour > 1) && (game_history[tour - 1]["state"] == JSON.stringify(grid))) {
+    console.log("Une fois mais pas deux !");
+    grid[x][y] = 0;
+    return true;
+  }
+  return false;
 }
