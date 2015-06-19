@@ -120,13 +120,12 @@ function next_step(id) {
 // Detect if player is trying to commit suicide or not
 function suicide(x, y) {
     grid[x][y] = player;
-    if (liberties(x,y) > 0) {
-        return false;
-    } else if (liberties(x,y) == 0) {
+    if (liberties(x, y) == 0 && (liberties(x+1,y)!= 0 && liberties(x-1,y)!= 0 && liberties(x,y+1)!= 0 && liberties(x,y-1)!= 0 )) {
         grid[x][y] = 0;
         window.alert(suicide);
         return true;
     }
+    return false;
 }
 
 function identify_groups() {
@@ -285,12 +284,13 @@ function reload_game() {
 }
 
 function liberties(x, y) {
+    identify_groups();
+
     var groupName = group[x][y];
 
     if (groupName == 0) {
         return "Aucun pion à cet endroit.";
     }
-
     var liberte = 0;
     var liberties_already_counted = [];
 
