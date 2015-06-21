@@ -1,13 +1,13 @@
 //// Variables
 var tour = 0;
 var rows = 9;
+var score_one = 0;
+var score_two = 7.5;
 var player = 1;
 var game_history = [];
 //// We declare the array's
 // group array -> contain the ID of the group for each row
 var group = new Array();
-var score_one = 0;
-var score_two = 0;
 for (var i = 0; i < rows; i++) {
   group[i] = new Array();
 }
@@ -25,7 +25,6 @@ for (var i = 0; i < rows; i++) {
 //// Generate HTML
 generate_background();
 generate_cells();
-
 // HTML table
 function generate_background() {
   var background = '<table id="tableau"><tbody>';
@@ -115,6 +114,8 @@ function next_step(id) {
         atari(x, y - 1);
       }
     }
+
+    score();
   }
 }
 // Detect if player is trying to commit suicide or not
@@ -346,64 +347,68 @@ function once_but_not_two(x, y) {
 }
 
 function score() {
-  score_two += 7, 5;
-  var points = 0;
+  var person = 12;
+  identify_groups();
   var points_already_counted = []; // les groupes d'intersections libres déjà comptés
-  identify_groups;
   for (x = 0; x < group.length; x++) {
     for (y = 0; y < group.length; y++) {
       if (grid[x][y] == 0 && !inArray(points_already_counted, group[x][y])) {
         var groupNumber = group[x][y];
         points_already_counted[points_already_counted.length] = groupNumber;
-        console.log(groupNumber);
+        var points = 0;
 
-        for (x = 0; x < rows; x++) {
-          for (y = 0; y < rows; y++) {
 
-            if (grid[x][y] == groupNumber) {
+        while (person == 12) {
+          for (k = 0; k < rows; k++) {
+            for (l = 0; l < rows; l++) {
 
-              if ((x + 1 < 9) && grid[x + 1][y] != 0) {
-                var person = grid[x + 1, y]; // le groupe libre heurte un joueur, on prend le premier qui arrive comme référent(pour qu'un point soit compté, il faut qu'il soit entièrement entouré par un même joueur)
-              } else if ((x - 1 >= 0) && grid[x - 1][y] != 0) {
-                person = grid[x - 1][y];
-              } else if ((y + 1 < 9) && grid[x][y + 1] != 0) {
-                person = grid[x][y + 1];
-              } else if ((y - 1 >= 0) && grid[x][y - 1] != 0) {
-                person = grid[x][y - 1];
+              if (group[k][l] == groupNumber) {
+
+                if ((k + 1 < 9) && grid[k + 1][l] != 0) {
+                  person = grid[k + 1][l]; // le groupe libre heurte un joueur, on prend le premier qui arrive comme référent(pour qu'un point soit compté, il faut qu'il soit entièrement entouré par un même joueur)
+                } else if ((k - 1 >= 0) && grid[k - 1][l] != 0) {
+                  person = grid[k - 1][l];
+                } else if ((l + 1 < 9) && grid[k][l + 1] != 0) {
+                  person = grid[k][l + 1];
+                } else if ((l - 1 >= 0) && grid[k][l - 1] != 0) {
+                  person = grid[k][l - 1];
+                }
               }
             }
           }
         }
 
-        if (person == 2) {
-          var adversary = 1; // on détermine l'adversaire
+        if (person == 1) {
+          var adversary = 2; // on détermine l'adversaire
         } else {
-          adversary = 2;
+          var adversary = 1;
         }
 
 
         var stop = false;
-        while (stop === false) {
-          for (x = 0; x < group.length; x++) {
-            for (y = 0; y < group.length; y++) {
-              if (group[x][y] == groupNumber) {
+        while (stop == false) {
+          for (m = 0; m < 9; m++) {
+            for (n = 0; n < 9; n++) {
+              if (group[m][n] == groupNumber) {
                 points += 1;
-              }
-              if ((x + 1 < 9 && grid[x + 1][y] == adversary) || (x - 1 >= 0 && grid[x - 1][y] == adversary) || (y + 1 < 9 && grid[x][y + 1] == adversary) || (y - 1 >= 0 && grid[x][y - 1] == adversary)) {
-                points = 0;
-                stop = true;
+                if ((m + 1 < 9 && grid[m + 1][n] == adversary) || (m - 1 >= 0 && grid[m - 1][n] == adversary) || (n + 1 < 9 && grid[m][n + 1] == adversary) || (n - 1 >= 0 && grid[m][n - 1] == adversary)) {
+                  points = 0;
+                  stop = true;
+                }
               }
             }
           }
-        }
-
-
-        if (person == 1) {
-          score_one += points;
-        } else {
-          score_two += points;
+          console.log(points);
+          stop = true;
         }
       }
     }
+  }
+
+  if(person == 1){
+    score_one += points;
+  }
+  else if (person == 2) {
+    score_two += points;
   }
 }
