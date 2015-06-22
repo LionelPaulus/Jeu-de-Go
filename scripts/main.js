@@ -7,6 +7,7 @@ var player = 1;
 var game_history = [];
 var game_finished = false;
 var last_skip = 0; // Used for the end of the game
+var ia = false;
 
 //// We declare the array's
 // group array -> contain the ID of the group for each row
@@ -88,42 +89,45 @@ function next_step(id) {
     }
   }
 
-  if ((grid[x][y] != 0 || suicide(x, y) == true) && (game_finished == false)) {
-    swal({
-      title: "Impossible de jouer ici !",
-      text: "Essayez de placer votre pion ailleurs.",
-      type: "error"
-    });
-    return;
-  } else {
-    if ((once_but_not_two(x, y) == false) && (game_finished == false)) {
-      identify_groups();
-      capture(x, y);
-      update_html();
-      tour += 1;
-      // Player alternation
-      if (player == 1) {
-        player = 2;
-      } else {
-        player = 1;
+  if ((ia == false)||(player == 1)&&(game_finished == false)){
+    if (grid[x][y] != 0 || suicide(x, y) == true) {
+      swal({
+        title: "Impossible de jouer ici !",
+        text: "Essayez de placer votre pion ailleurs.",
+        type: "error"
+      });
+      return;
+    } else {
+      if (once_but_not_two(x, y) == false) {
+        identify_groups();
+        capture(x, y);
+        update_html();
+        tour += 1;
+        // Player alternation
+        if (player == 1) {
+          player = 2;
+        } else {
+          player = 1;
+        }
+        atari(x, y);
+        if (x + 1 <= 8) {
+          atari(x + 1, y);
+        }
+        if (x - 1 >= 0) {
+          atari(x - 1, y);
+        }
+        if (y + 1 <= 8) {
+          atari(x, y + 1);
+        }
+        if (y - 1 >= 0) {
+          atari(x, y - 1);
+        }
+        score();
       }
-      atari(x, y);
-      if (x + 1 <= 8) {
-        atari(x + 1, y);
-      }
-      if (x - 1 >= 0) {
-        atari(x - 1, y);
-      }
-      if (y + 1 <= 8) {
-        atari(x, y + 1);
-      }
-      if (y - 1 >= 0) {
-        atari(x, y - 1);
-      }
-      score();
     }
   }
 }
+
 // Detect if player is trying to commit suicide or not
 function suicide(x, y) {
   grid[x][y] = player;
