@@ -98,7 +98,7 @@ function next_step(id) {
       });
       return;
     } else {
-      if (once_but_not_two(x, y) == false) {
+      if (ko(x, y) == false) {
         identify_groups();
         scores();
         capture(x, y);
@@ -340,7 +340,7 @@ function atari(x, y) {
   }
 }
 
-function once_but_not_two(x, y) {
+function ko(x, y) {
   game_history[tour] = [];
   game_history[tour]["state"] = JSON.stringify(grid);
   if (x != null && y != null) {
@@ -401,7 +401,7 @@ function skip(spec) {
         title: "Le joueur " + player + " a passé son tour"
       });
       last_skip = tour;
-      once_but_not_two();
+      ko();
 
       // Player alternation
       if (player == 1) {
@@ -416,6 +416,8 @@ function skip(spec) {
 
 function scores() {
   var scores_by_group = [];
+  score_one = 0;
+  score_two = 0;
   for (x = 0; x < rows; x++) {
     for (y = 0; y < rows; y++) {
       var group_id = group[x][y];
@@ -460,6 +462,17 @@ function scores() {
           }
         }
         scores_by_group[group_id]["points"] += 1;
+      }
+    }
+  }
+
+  // Calculate the totals
+  for (var i = 0; i < scores_by_group.length; i++) {
+    if(scores_by_group[i] && scores_by_group[i]["neutral"] == false){
+      if(scores_by_group[i]["player"] == 1){
+        score_one += scores_by_group[i]["points"];
+      } else {
+        score_two += scores_by_group[i]["points"];
       }
     }
   }
