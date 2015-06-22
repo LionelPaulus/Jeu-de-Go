@@ -89,7 +89,7 @@ function next_step(id) {
     }
   }
 
-  if ((ia == false)||(player == 1)&&(game_finished == false)){
+  if ((ia == false) || (player == 1) && (game_finished == false)) {
     if (grid[x][y] != 0 || suicide(x, y) == true) {
       swal({
         title: "Impossible de jouer ici !",
@@ -100,6 +100,7 @@ function next_step(id) {
     } else {
       if (once_but_not_two(x, y) == false) {
         identify_groups();
+        scores();
         capture(x, y);
         update_html();
         tour += 1;
@@ -122,7 +123,6 @@ function next_step(id) {
         if (y - 1 >= 0) {
           atari(x, y - 1);
         }
-        score();
       }
     }
   }
@@ -221,11 +221,11 @@ function capture(x, y) {
 
 function count_liberties(x, y) {
   identify_groups();
-  var groupName = group[x][y];
+  var group_id = group[x][y];
   // Detect if surrounded or not
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < rows; j++) {
-      if (groupName != 0 && group[i][j] == groupName) {
+      if (group_id != 0 && group[i][j] == group_id) {
         if (((j - 1) >= 0 && grid[i][j - 1] == 0) || ((i + 1) < rows && grid[i + 1][j] == 0) || ((j + 1) < rows && grid[i][j + 1] == 0) || ((i - 1) >= 0 && grid[i - 1][j] == 0)) {
           // Not surrounded -> we stop here
           return;
@@ -237,8 +237,8 @@ function count_liberties(x, y) {
   var captured_cells = 0;
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < rows; j++) {
-      if (group[i][j] == groupName) {
-        if ((groupName > 0) && (grid[i][j] != player) && (grid[i][j] != 0)) {
+      if (group[i][j] == group_id) {
+        if ((group_id > 0) && (grid[i][j] != player) && (grid[i][j] != 0)) {
           captured_cells += 1;
         }
         grid[i][j] = 0;
@@ -278,7 +278,6 @@ function save_game() {
 }
 
 function reload_game() {
-
   if (localStorage.getItem('game_state') == null) {
     window.alert("Aucun état de jeu sauvegardé !");
   } else {
@@ -290,9 +289,8 @@ function reload_game() {
 function liberties(x, y) {
   identify_groups();
 
-  var groupName = group[x][y];
-
-  if (groupName == 0) {
+  var group_id = group[x][y];
+  if (group_id == 0) {
     return "Aucun pion à cet endroit.";
   }
   var liberte = 0;
@@ -300,7 +298,7 @@ function liberties(x, y) {
 
   for (x = 0; x < group.length; x++) {
     for (y = 0; y < group.length; y++) {
-      if (group[x][y] == groupName) {
+      if (group[x][y] == group_id) {
         //// We check each side
         if ((typeof(grid[x + 1]) != "undefined" && grid[x + 1][y] == 0) && (!inArray(liberties_already_counted, (x + 1) + "_" + y))) {
           liberties_already_counted[liberties_already_counted.length] = (x + 1) + "_" + y;
@@ -360,81 +358,6 @@ function once_but_not_two(x, y) {
   }
 }
 
-function score() {
-  var points = 0;
-  identify_groups();
-  var points_already_counted = []; // les groupes d'intersections libres déjà comptés
-  for (x = 0; x < group.length; x++) {
-    for (y = 0; y < group.length; y++) {
-      if (grid[x][y] == 0 && !inArray(points_already_counted, group[x][y])) {
-        var person = 12;
-        var groupNumber = group[x][y];
-        points_already_counted[points_already_counted.length] = groupNumber;
-
-        while (person == 12) {
-          for (k = 0; k < rows; k++) {
-            for (l = 0; l < rows; l++) {
-
-              if (group[k][l] == groupNumber) {
-
-                if ((k + 1 < 9) && grid[k + 1][l] != 0) {
-                  person = grid[k + 1][l]; // le groupe libre heurte un joueur, on prend le premier qui arrive comme référent(pour qu'un point soit compté, il faut qu'il soit entièrement entouré par un même joueur)
-                } else if ((k - 1 >= 0) && grid[k - 1][l] != 0) {
-                  person = grid[k - 1][l];
-                } else if ((l + 1 < 9) && grid[k][l + 1] != 0) {
-                  person = grid[k][l + 1];
-                } else if ((l - 1 >= 0) && grid[k][l - 1] != 0) {
-                  person = grid[k][l - 1];
-                }
-              }
-            }
-          }
-          console.log("PERSON : " + person);
-        }
-        console.log(person);
-
-        if (person == 1) {
-          var adversary = 2; // on détermine l'adversaire
-        } else {
-          var adversary = 1;
-        }
-        console.log("ADVERSARY : " + adversary);
-
-        var stop = false;
-        while (stop == false) {
-          for (m = 0; m < 9; m++) {
-            for (n = 0; n < 9; n++) {
-              if (group[m][n] == groupNumber) {
-                points += 1;
-                console.log("itère de 1 " + groupNumber);
-              }
-              //if ((typeof(grid[m+1]) != "undefined" && grid[m + 1][n] == adversary) || (typeof(grid[m-1]) != "undefined" && grid[m - 1][n] == adversary) || (typeof(grid[m][n+1]) != "undefined" && grid[m][n + 1] == adversary) || (typeof(grid[m][n-1]) != "undefined" && grid[m][n - 1] == adversary)) {
-              if ((grid[m + 1] && grid[m + 1][n] == adversary) || (grid[m - 1] && grid[m - 1][n] == adversary) || (grid[m][n + 1] && grid[m][n + 1] == adversary) || (grid[m][n - 1] && grid[m][n - 1] == adversary)) {
-                points = 0;
-                console.log("remet à zéro les points de " + groupNumber);
-                n = 9;
-                m = 9;
-                stop = true;
-              }
-            }
-          }
-          console.log("POINTS : " + points);
-          stop = true;
-        }
-        if (person == 1) {
-          score_one += points;
-        } else if (person == 2) {
-          score_two += points;
-        }
-        console.log("SCORE ONE : " + score_one);
-        console.log("SCORE TWO : " + score_two);
-
-      }
-    }
-  }
-
-}
-
 function skip(spec) {
   if (spec == "abandonment") {
     if (tour == 0) {
@@ -490,59 +413,54 @@ function skip(spec) {
     }
   }
 }
-var tamere = [];
 
-function score_deux() {
-  identify_groups(); // A enlenver
-
+function scores() {
+  var scores_by_group = [];
   for (x = 0; x < rows; x++) {
     for (y = 0; y < rows; y++) {
-      var groupName = group[x][y];
-      // If the groupName is not already in the array
-      if(typeof(tamere[groupName] == "undefined")){
-        tamere[groupName] = [];
-        tamere[groupName]["points"] = 0;
-        tamere[groupName]["player"] = 0;
-        tamere[groupName]["banned"] = false;
+      var group_id = group[x][y];
+      // If the group_id is not already in the array
+      if ((grid[x][y] == 0) && (scores_by_group[group_id] == null)) {
+        scores_by_group[group_id] = [];
+        scores_by_group[group_id]["points"] = 0;
+        scores_by_group[group_id]["player"] = 0;
+        scores_by_group[group_id]["neutral"] = false;
       }
-      if ((grid[x][y] == 0) && (tamere[groupName]["banned"] == false)) {
+      if ((grid[x][y] == 0) && (scores_by_group[group_id]["neutral"] == false)) {
         // Left
         if ((y - 1) >= 0 && grid[x][y - 1] > 0) {
-          if (tamere[groupName]["player"] == 0) {
-            tamere[groupName]["player"] = grid[x][y - 1];
-          } else if (grid[x][y - 1] != tamere[groupName]["player"]) {
-            tamere[groupName]["banned"] = true;
+          if (scores_by_group[group_id]["player"] == 0) {
+            scores_by_group[group_id]["player"] = grid[x][y - 1];
+          } else if (grid[x][y - 1] != scores_by_group[group_id]["player"]) {
+            scores_by_group[group_id]["neutral"] = true;
           }
         }
         // Down
         if ((x + 1) < rows && grid[x + 1][y] > 0) {
-          if (tamere[groupName]["player"] == 0) {
-            tamere[groupName]["player"] = grid[x + 1][y];
-          } else if (grid[x + 1][y] != tamere[groupName]["player"]) {
-            tamere[groupName]["banned"] = true;
+          if (scores_by_group[group_id]["player"] == 0) {
+            scores_by_group[group_id]["player"] = grid[x + 1][y];
+          } else if (grid[x + 1][y] != scores_by_group[group_id]["player"]) {
+            scores_by_group[group_id]["neutral"] = true;
           }
         }
         // Right
         if ((y + 1) < rows && grid[x][y + 1] > 0) {
-          if (tamere[groupName]["player"] == 0) {
-            tamere[groupName]["player"] = grid[x][y + 1];
-          } else if (grid[x][y + 1] != tamere[groupName]["player"]) {
-            tamere[groupName]["banned"] = true;
+          if (scores_by_group[group_id]["player"] == 0) {
+            scores_by_group[group_id]["player"] = grid[x][y + 1];
+          } else if (grid[x][y + 1] != scores_by_group[group_id]["player"]) {
+            scores_by_group[group_id]["neutral"] = true;
           }
         }
         // Up
         if ((x - 1) >= 0 && grid[x - 1][y] > 0) {
-          if (tamere[groupName]["player"] == 0) {
-            tamere[groupName]["player"] = grid[x - 1][y];
-          } else if (grid[x - 1][y] != tamere[groupName]["player"]) {
-            tamere[groupName]["banned"] = true;
+          if (scores_by_group[group_id]["player"] == 0) {
+            scores_by_group[group_id]["player"] = grid[x - 1][y];
+          } else if (grid[x - 1][y] != scores_by_group[group_id]["player"]) {
+            scores_by_group[group_id]["neutral"] = true;
           }
         }
-        tamere[groupName]["points"] += 1;
+        scores_by_group[group_id]["points"] += 1;
       }
     }
   }
-
-  
-  console.log(tamere);
 }
