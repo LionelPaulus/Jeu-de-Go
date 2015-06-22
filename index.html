@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>Jeu de Go</title>
   <link rel="stylesheet" type="text/css" href="style/style.css">
+  <link rel="stylesheet" type="text/css" href="style/sweetalert.css">
 </head>
 
 <body>
@@ -13,9 +14,10 @@
     </div>
   </div>
   <div id="grid"></div>
-  <button onclick="save_game();">Save</button><button onclick="reload_game();">Reload</button>
+  <button onclick="save_game();">Enregistrer</button><button onclick="reload_game();">Reprendre</button><button onclick="skip();">Passer son tour</button><button onclick="skip('abandonment');">Abandonner</button>
   <script type="text/javascript" src="scripts/json2.js"></script>
   <script type="text/javascript" src="scripts/main.js"></script>
+  <script type="text/javascript" src="scripts/sweetalert.min.js"></script>
 </body>
 
 </html>
