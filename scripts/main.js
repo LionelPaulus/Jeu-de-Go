@@ -415,65 +415,69 @@ function skip(spec) {
 }
 
 function scores() {
-  var scores_by_group = [];
-  score_one = 0;
-  score_two = 0;
-  for (x = 0; x < rows; x++) {
-    for (y = 0; y < rows; y++) {
-      var group_id = group[x][y];
-      // If the group_id is not already in the array
-      if ((grid[x][y] == 0) && (scores_by_group[group_id] == null)) {
-        scores_by_group[group_id] = [];
-        scores_by_group[group_id]["points"] = 0;
-        scores_by_group[group_id]["player"] = 0;
-        scores_by_group[group_id]["neutral"] = false;
-      }
-      if ((grid[x][y] == 0) && (scores_by_group[group_id]["neutral"] == false)) {
-        // Left
-        if ((y - 1) >= 0 && grid[x][y - 1] > 0) {
-          if (scores_by_group[group_id]["player"] == 0) {
-            scores_by_group[group_id]["player"] = grid[x][y - 1];
-          } else if (grid[x][y - 1] != scores_by_group[group_id]["player"]) {
-            scores_by_group[group_id]["neutral"] = true;
-          }
+  if (tour > 1) {
+    var scores_by_group = [];
+    score_one = 0;
+    score_two = 0;
+    for (x = 0; x < rows; x++) {
+      for (y = 0; y < rows; y++) {
+        var group_id = group[x][y];
+        // If the group_id is not already in the array
+        if ((grid[x][y] == 0) && (scores_by_group[group_id] == null)) {
+          scores_by_group[group_id] = [];
+          scores_by_group[group_id]["points"] = 0;
+          scores_by_group[group_id]["player"] = 0;
+          scores_by_group[group_id]["neutral"] = false;
         }
-        // Down
-        if ((x + 1) < rows && grid[x + 1][y] > 0) {
-          if (scores_by_group[group_id]["player"] == 0) {
-            scores_by_group[group_id]["player"] = grid[x + 1][y];
-          } else if (grid[x + 1][y] != scores_by_group[group_id]["player"]) {
-            scores_by_group[group_id]["neutral"] = true;
+        if ((grid[x][y] == 0) && (scores_by_group[group_id]["neutral"] == false)) {
+          // Left
+          if ((y - 1) >= 0 && grid[x][y - 1] > 0) {
+            if (scores_by_group[group_id]["player"] == 0) {
+              scores_by_group[group_id]["player"] = grid[x][y - 1];
+            } else if (grid[x][y - 1] != scores_by_group[group_id]["player"]) {
+              scores_by_group[group_id]["neutral"] = true;
+            }
           }
-        }
-        // Right
-        if ((y + 1) < rows && grid[x][y + 1] > 0) {
-          if (scores_by_group[group_id]["player"] == 0) {
-            scores_by_group[group_id]["player"] = grid[x][y + 1];
-          } else if (grid[x][y + 1] != scores_by_group[group_id]["player"]) {
-            scores_by_group[group_id]["neutral"] = true;
+          // Down
+          if ((x + 1) < rows && grid[x + 1][y] > 0) {
+            if (scores_by_group[group_id]["player"] == 0) {
+              scores_by_group[group_id]["player"] = grid[x + 1][y];
+            } else if (grid[x + 1][y] != scores_by_group[group_id]["player"]) {
+              scores_by_group[group_id]["neutral"] = true;
+            }
           }
-        }
-        // Up
-        if ((x - 1) >= 0 && grid[x - 1][y] > 0) {
-          if (scores_by_group[group_id]["player"] == 0) {
-            scores_by_group[group_id]["player"] = grid[x - 1][y];
-          } else if (grid[x - 1][y] != scores_by_group[group_id]["player"]) {
-            scores_by_group[group_id]["neutral"] = true;
+          // Right
+          if ((y + 1) < rows && grid[x][y + 1] > 0) {
+            if (scores_by_group[group_id]["player"] == 0) {
+              scores_by_group[group_id]["player"] = grid[x][y + 1];
+            } else if (grid[x][y + 1] != scores_by_group[group_id]["player"]) {
+              scores_by_group[group_id]["neutral"] = true;
+            }
           }
+          // Up
+          if ((x - 1) >= 0 && grid[x - 1][y] > 0) {
+            if (scores_by_group[group_id]["player"] == 0) {
+              scores_by_group[group_id]["player"] = grid[x - 1][y];
+            } else if (grid[x - 1][y] != scores_by_group[group_id]["player"]) {
+              scores_by_group[group_id]["neutral"] = true;
+            }
+          }
+          scores_by_group[group_id]["points"] += 1;
         }
-        scores_by_group[group_id]["points"] += 1;
       }
     }
-  }
 
-  // Calculate the totals
-  for (var i = 0; i < scores_by_group.length; i++) {
-    if(scores_by_group[i] && scores_by_group[i]["neutral"] == false){
-      if(scores_by_group[i]["player"] == 1){
-        score_one += scores_by_group[i]["points"];
-      } else {
-        score_two += scores_by_group[i]["points"];
+    // Calculate the totals
+    for (var i = 0; i < scores_by_group.length; i++) {
+      if(scores_by_group[i] && scores_by_group[i]["neutral"] == false){
+        if(scores_by_group[i]["player"] == 1){
+          score_one += scores_by_group[i]["points"];
+        } else {
+          score_two += scores_by_group[i]["points"];
+        }
       }
     }
+    document.getElementById("score_one").innerHTML = score_one;
+    document.getElementById("score_two").innerHTML = score_two;  
   }
 }
