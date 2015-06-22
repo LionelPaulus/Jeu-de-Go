@@ -5,6 +5,9 @@ var score_one = 0;
 var score_two = 7.5;
 var player = 1;
 var game_history = [];
+var game_finished = false;
+var last_skip = 0; // Used for the end of the game
+
 //// We declare the array's
 // group array -> contain the ID of the group for each row
 var group = new Array();
@@ -22,7 +25,7 @@ for (var i = 0; i < rows; i++) {
   }
 }
 
-//// Generate HTML
+//// Generate the DOM
 generate_background();
 generate_cells();
 // HTML table
@@ -85,11 +88,15 @@ function next_step(id) {
     }
   }
 
-  if (grid[x][y] != 0 || suicide(x, y) == true) {
-    console.log("Impossible de jouer ici !");
+  if ((grid[x][y] != 0 || suicide(x, y) == true) && (game_finished == false)) {
+    swal({
+      title: "Impossible de jouer ici !",
+      text: "Essayez de placer votre pion ailleurs.",
+      type: "error"
+    });
     return;
   } else {
-    if (once_but_not_two(x, y) == false) {
+    if ((once_but_not_two(x, y) == false) && (game_finished == false)) {
       identify_groups();
       capture(x, y);
       update_html();
@@ -113,9 +120,8 @@ function next_step(id) {
       if (y - 1 >= 0) {
         atari(x, y - 1);
       }
+      score();
     }
-
-    score();
   }
 }
 // Detect if player is trying to commit suicide or not
@@ -123,7 +129,6 @@ function suicide(x, y) {
   grid[x][y] = player;
   if (liberties(x, y) == 0 && (liberties(x + 1, y) != 0 && liberties(x - 1, y) != 0 && liberties(x, y + 1) != 0 && liberties(x, y - 1) != 0)) {
     grid[x][y] = 0;
-    window.alert("suicide");
     return true;
   }
   return false;
@@ -210,8 +215,6 @@ function capture(x, y) {
   }
 }
 
-
-
 function count_liberties(x, y) {
   identify_groups();
   var groupName = group[x][y];
@@ -231,10 +234,10 @@ function count_liberties(x, y) {
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < rows; j++) {
       if (group[i][j] == groupName) {
-        grid[i][j] = 0;
-        if (groupName > 0) {
+        if ((groupName > 0) && (grid[i][j] != player) && (grid[i][j] != 0)) {
           captured_cells += 1;
         }
+        grid[i][j] = 0;
       }
     }
   }
@@ -271,6 +274,7 @@ function save_game() {
 }
 
 function reload_game() {
+
   if (localStorage.getItem('game_state') == null) {
     window.alert("Aucun état de jeu sauvegardé !");
   } else {
@@ -337,16 +341,23 @@ function atari(x, y) {
 function once_but_not_two(x, y) {
   game_history[tour] = [];
   game_history[tour]["state"] = JSON.stringify(grid);
-  grid[x][y] = player; // Add player pawn to array
-  if ((tour > 1) && (game_history[tour - 1]["state"] == JSON.stringify(grid))) {
-    console.log("Une fois mais pas deux !");
-    grid[x][y] = 0;
-    return true;
+  if (x != null && y != null) {
+    grid[x][y] = player; // Add player pawn to array
+    if ((tour > 1) && (game_history[tour - 1]["state"] == JSON.stringify(grid))) {
+      swal({
+        title: "Règle du KO",
+        text: "La règle du ko interdit la reprise immédiate dans une situation de ko. Cette régle permet d'éviter des prises et reprises qui ne s'arrêteraient jamais.",
+        type: "error"
+      });
+      grid[x][y] = 0;
+      return true;
+    }
+    return false;
   }
-  return false;
 }
 
 function score() {
+  var points = 0;
   var person = 12;
   identify_groups();
   var points_already_counted = []; // les groupes d'intersections libres déjà comptés
@@ -355,8 +366,6 @@ function score() {
       if (grid[x][y] == 0 && !inArray(points_already_counted, group[x][y])) {
         var groupNumber = group[x][y];
         points_already_counted[points_already_counted.length] = groupNumber;
-        var points = 0;
-
 
         while (person == 12) {
           for (k = 0; k < rows; k++) {
@@ -405,10 +414,68 @@ function score() {
     }
   }
 
-  if(person == 1){
+  if (person == 1) {
     score_one += points;
-  }
-  else if (person == 2) {
+  } else if (person == 2) {
     score_two += points;
+  }
+  console.log("person: " + person);
+  console.log("score_one:" + score_one);
+  console.log("score_two:" + score_two);
+}
+
+function skip(spec) {
+  if (spec == "abandonment") {
+    if (tour == 0) {
+      swal({
+        title: "Nop",
+        text: "Il faudrait déjà poser un pion avant d'abandonner...",
+        type: "error"
+      });
+    } else {
+      game_finished = true;
+      swal({
+          title: "Et c'est un abandon !",
+          text: "Féliciations, vous avez gagné :)",
+          imageUrl: "images/cup-128.png",
+          confirmButtonText: "Nouvelle partie",
+          closeOnConfirm: false,
+          showCancelButton: true,
+          cancelButtonText: "Voir les scores"
+        },
+        function() {
+          window.location.reload();
+        });
+    }
+  } else {
+    if (((last_skip + 1) == tour) && (tour > 1)) {
+      game_finished = true;
+      swal({
+          title: "Le joueur X a gagné !",
+          text: "Mais vous avez tous les deux très bien joué :)",
+          imageUrl: "images/cup-128.png",
+          confirmButtonText: "Nouvelle partie",
+          closeOnConfirm: false,
+          showCancelButton: true,
+          cancelButtonText: "Voir les scores"
+        },
+        function() {
+          window.location.reload();
+        });
+    } else {
+      swal({
+        title: "Le joueur " + player + " a passé son tour"
+      });
+      last_skip = tour;
+      once_but_not_two();
+
+      // Player alternation
+      if (player == 1) {
+        player = 2;
+      } else {
+        player = 1;
+      }
+      tour += 1;
+    }
   }
 }
