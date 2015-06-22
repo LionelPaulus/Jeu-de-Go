@@ -542,5 +542,7 @@ function score_deux() {
       }
     }
   }
+
+  
   console.log(tamere);
 }
