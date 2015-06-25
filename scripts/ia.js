@@ -1,26 +1,13 @@
 function ia() {
-  var x ;
-  var y;
-  /*for(k = 0 ; k < 9 ; k++){
-    for(l = 0; l < 9 ; l++){
-    }
-  }
-  var stratégie = Math.floor*/
-  x = Math.floor(Math.random() * (rows -1));
-  y = Math.floor(Math.random() * (rows -1));
-  if(grid[x][y] == 0){
-    if(suicide(x,y) == false && ko(x,y) == false){
-      console.log(x + "_" + y);
-        return (x + "_" + y);
-    }
-  }
-  else {
-    ia();
-  }
+  do {
+    var x = Math.floor(Math.random() * (rows - 1));
+    var y = Math.floor(Math.random() * (rows - 1));
+  } while(possible(x, y) != true);
+  return x + "_" + y;
 }
 
 function possible(x, y) {
-  if(grid[x][y] == 0){
+  if (grid[x][y] == 0) {
     if ((suicide(x, y) == false) && (ko(x, y) == false)) {
       return true;
     } else {
