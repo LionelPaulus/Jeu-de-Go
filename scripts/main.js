@@ -7,7 +7,7 @@ var player = 1;
 var game_history = [];
 var game_finished = false;
 var last_skip = 0; // Used for the end of the game
-var ia_mode = false;
+var ia_mode = true;
 
 //// We declare the array's
 // group array -> contain the ID of the group for each row
@@ -99,6 +99,7 @@ function next_step(id) {
       return;
     } else {
       if (ko(x, y) == false) {
+        grid[x][y] = player;
         identify_groups();
         scores();
         capture(x, y);
@@ -119,16 +120,16 @@ function next_step(id) {
           atari(x, y - 1);
         }
 
-        if (player == 1 && ia_mode == true) {
-          var ia_data = ia();
-          next_step(ia_data);
-        }
-
         // Player alternation
         if (player == 1) {
           player = 2;
         } else {
           player = 1;
+        }
+
+        if (player == 2 && ia_mode == true) {
+          var ia_data = ia();
+          next_step(ia_data);
         }
       }
     }
@@ -142,6 +143,7 @@ function suicide(x, y) {
     grid[x][y] = 0;
     return true;
   }
+  grid[x][y] = 0;
   return false;
 }
 
@@ -361,6 +363,7 @@ function ko(x, y) {
       grid[x][y] = 0;
       return true;
     }
+    grid[x][y] = 0;
     return false;
   }
 }
