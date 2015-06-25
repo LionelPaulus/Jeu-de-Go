@@ -19,7 +19,15 @@ function ia() {
   }
 }
 
-
+function possible(x, y) {
+  if(grid[x][y] == 0){
+    if ((suicide(x, y) == false) && (ko(x, y) == false)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
 
 function attributePos(x, y) {
   if (possible(x + 1, y) == true) {
