@@ -1,4 +1,4 @@
-//// Var bles
+//// Variables
 var tour = 0;
 var rows = 9;
 var score_one = 0;
@@ -33,16 +33,11 @@ generate_cells();
 function generate_background() {
   var background = '<table id="tableau"><tbody>';
   for (var a = 1; a < rows; a++) {
-
     background += '<tr>';
-
     for (var b = 1; b < rows; b++) {
-
       background += '<td class="cellule"></td>';
     }
-
     background += '</tr>';
-
   }
   document.getElementById("goban").innerHTML = '</tbody></table>' + background;
 }
@@ -50,23 +45,15 @@ function generate_background() {
 // Clickable DIV
 function generate_cells() {
   var goban = '';
-
   document.getElementById("grid").innerHTML = "";
-
   for (a = 0; a < rows; a++) {
     goban += "<div class='lines'>";
-
     for (b = 0; b < rows; b++) {
-
       goban += '<div id="' + (a + "_" + b) + '" class="empty" onclick="next_step(id);"></div>';
     }
-
     goban = goban + '</div>';
-
   }
-
   document.getElementById("grid").innerHTML = goban;
-
 }
 
 //// Onclick of the DIV
@@ -105,6 +92,7 @@ function next_step(id) {
         capture(x, y);
         update_html();
         tour += 1;
+        auto_backup();
 
         atari(x, y);
         if (x + 1 <= 8) {
@@ -127,9 +115,13 @@ function next_step(id) {
           player = 1;
         }
 
+        // IA turn
         if (player == 2 && ia_mode == true) {
-          var ia_data = ia();
-          next_step(ia_data);
+          //setTimeout(function() {
+            var ia_data = ia();
+            console.log("Position IA: " + ia_data);
+            next_step(ia_data);
+          //}, 4000);
         }
       }
     }
@@ -281,17 +273,30 @@ function update_html() {
   }
 }
 
-function save_game() {
-  var game_state = JSON.stringify(grid);
-  localStorage.setItem('game_state', game_state);
-}
-
-function reload_game() {
-  if (localStorage.getItem('game_state') == null) {
-    window.alert("Aucun état de jeu sauvegardé !");
-  } else {
-    grid = JSON.parse(localStorage.getItem('game_state'));
-    update_html();
+function auto_backup() {
+  if (localStorage.getItem('game_state') != null && tour == 0) {
+    swal({
+        title: "Hé on se connaît non ?",
+        text: "Vous n'aviez pas terminé votre dernière partie, souhaitez-vous la reprendre ?",
+        imageUrl: "images/backup.png",
+        confirmButtonText: "Reprendre la partie",
+        showCancelButton: true,
+        cancelButtonText: "Nouvelle partie"
+      },
+      function() {
+        grid = JSON.parse(localStorage.getItem('game_state'));
+        score_one = localStorage.getItem('score_one');
+        score_two = localStorage.getItem('score_two');
+        document.getElementById("score_one").innerHTML = score_one;
+        document.getElementById("score_two").innerHTML = score_two;
+        update_html();
+      });
+  }
+  if (tour != 0) {
+    var game_state = JSON.stringify(grid);
+    localStorage.setItem('game_state', game_state);
+    localStorage.setItem('score_one', score_one);
+    localStorage.setItem('score_two', score_two);
   }
 }
 
@@ -347,8 +352,7 @@ function atari(x, y) {
   if (liberties(x, y) == 1) {
     console.log(("ATARI en " + x + "/" + y));
     return true;
-  }
-  else {
+  } else {
     return false;
   }
 }
@@ -495,3 +499,7 @@ function scores() {
     document.getElementById("score_two").innerHTML = score_two;
   }
 }
+
+
+/// Start elementary fonctions
+auto_backup();
