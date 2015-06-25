@@ -478,6 +478,6 @@ function scores() {
       }
     }
     document.getElementById("score_one").innerHTML = score_one;
-    document.getElementById("score_two").innerHTML = score_two;  
+    document.getElementById("score_two").innerHTML = score_two;
   }
 }
