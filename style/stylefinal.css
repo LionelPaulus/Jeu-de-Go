@@ -104,4 +104,11 @@ img#chaines{
 	float:right;
 }
 
+a > #joueur1{
+	margin-left: -15%;
+	padding-top:10%; 
+}
 
+a > #joueur2{
+	margin-left: -20%;
+}
