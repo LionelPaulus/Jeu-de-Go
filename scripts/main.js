@@ -7,7 +7,7 @@ var player = 1;
 var game_history = [];
 var game_finished = false;
 var last_skip = 0; // Used for the end of the game
-var ia = false;
+var ia_mode = false;
 
 //// We declare the array's
 // group array -> contain the ID of the group for each row
@@ -71,25 +71,25 @@ function generate_cells() {
 
 //// Onclick of the DIV
 function next_step(id) {
-  var x = parseInt(id.substring(0, id.indexOf("_"))); // Horizontal
-  var y = parseInt(id.substring(id.indexOf("_") + 1)); // Vertical
-  var former_grid = new Array();
-  for (var i = 0; i < rows; i++) {
-    former_grid[i] = new Array();
-    for (var j = 0; j < rows; j++) {
-      former_grid[i][j] = new Array();
-    }
-  }
-
-  if ((tour % 2) == 0) {
+  if (game_finished == false) {
+    var x = parseInt(id.substring(0, id.indexOf("_"))); // Horizontal
+    var y = parseInt(id.substring(id.indexOf("_") + 1)); // Vertical
+    var former_grid = new Array();
     for (var i = 0; i < rows; i++) {
+      former_grid[i] = new Array();
       for (var j = 0; j < rows; j++) {
-        former_grid[i][j] = grid[i][j];
+        former_grid[i][j] = new Array();
       }
     }
-  }
 
-  if ((ia == false) || (player == 1) && (game_finished == false)) {
+    if ((tour % 2) == 0) {
+      for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < rows; j++) {
+          former_grid[i][j] = grid[i][j];
+        }
+      }
+    }
+
     if (grid[x][y] != 0 || suicide(x, y) == true) {
       swal({
         title: "Impossible de jouer ici !",
@@ -104,12 +104,7 @@ function next_step(id) {
         capture(x, y);
         update_html();
         tour += 1;
-        // Player alternation
-        if (player == 1) {
-          player = 2;
-        } else {
-          player = 1;
-        }
+
         atari(x, y);
         if (x + 1 <= 8) {
           atari(x + 1, y);
@@ -122,6 +117,18 @@ function next_step(id) {
         }
         if (y - 1 >= 0) {
           atari(x, y - 1);
+        }
+
+        if (player == 1 && ia_mode == true) {
+          var ia_data = ia();
+          next_step(ia_data);
+        }
+
+        // Player alternation
+        if (player == 1) {
+          player = 2;
+        } else {
+          player = 1;
         }
       }
     }
@@ -469,8 +476,8 @@ function scores() {
 
     // Calculate the totals
     for (var i = 0; i < scores_by_group.length; i++) {
-      if(scores_by_group[i] && scores_by_group[i]["neutral"] == false){
-        if(scores_by_group[i]["player"] == 1){
+      if (scores_by_group[i] && scores_by_group[i]["neutral"] == false) {
+        if (scores_by_group[i]["player"] == 1) {
           score_one += scores_by_group[i]["points"];
         } else {
           score_two += scores_by_group[i]["points"];
