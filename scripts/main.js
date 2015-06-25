@@ -1,4 +1,4 @@
-//// Var bles
+//// Variables
 var tour = 0;
 var rows = 9;
 var score_one = 0;
@@ -345,11 +345,7 @@ function inArray(tableau, element) {
 
 function atari(x, y) {
   if (liberties(x, y) == 1) {
-    console.log(("ATARI en " + x + "/" + y));
-    return true;
-  }
-  else {
-    return false;
+    console.log("ATARI en " + x + "/" + y);
   }
 }
 
