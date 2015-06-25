@@ -118,9 +118,9 @@ function next_step(id) {
         // IA turn
         if (player == 2 && ia_mode == true) {
           //setTimeout(function() {
-            var ia_data = ia();
-            console.log("Position IA: " + ia_data);
-            next_step(ia_data);
+          var ia_data = ia();
+          console.log("Position IA: " + ia_data);
+          next_step(ia_data);
           //}, 4000);
         }
       }
@@ -497,6 +497,18 @@ function scores() {
     }
     document.getElementById("score_one").innerHTML = score_one;
     document.getElementById("score_two").innerHTML = score_two;
+  }
+
+  if (tour > 15 && ia_mode == true) {
+    console.log(scores_by_group.length);
+    console.log(scores_by_group[73]["neutral"]);
+    game_finished = true;
+    for (var k = 0; k < scores_by_group.length; k++) {
+      if (scores_by_group[k] && scores_by_group[k]["neutral"] == true) {
+        console.log(k);
+        game_finished = false;
+      }
+    }
   }
 }
 
