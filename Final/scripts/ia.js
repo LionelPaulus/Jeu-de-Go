@@ -1,6 +1,6 @@
 function ia() {
   var count = 0;
-  var strategy = Math.floor(Math.random() * (2 - 1)) + 1;
+  var strategy = Math.floor(Math.random() * (2));
   console.log("stratégie : " + strategy);
   for (x = 0; x < rows; x++) {
     for (y = 0; y < rows; y++) {
