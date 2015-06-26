@@ -5,9 +5,9 @@ var player = 1;
 var game_history = [];
 var game_finished = false;
 var last_skip = 0; // Used for the end of the game
-if(window.location.search == "?mode=duo"){
+if (window.location.search == "?mode=duo") {
   var ia_mode = false;
-}else {
+} else {
   var ia_mode = true;
 }
 
@@ -136,13 +136,15 @@ function next_step(id) {
         }
       }
     }
+  } else {
+    console.log("tamere");
   }
 }
 
 // Detect if player is trying to commit suicide or not
 function suicide(x, y) {
   grid[x][y] = player;
-  console.log("player: "+ player);
+  console.log("player: " + player);
   var dead = false;
 
   /*if (liberties(x, y) == 0 && (liberties(x + 1, y) != 0 && liberties(x - 1, y) != 0 && liberties(x, y + 1) != 0 && liberties(x, y - 1) != 0)) {
@@ -552,7 +554,15 @@ function scores() {
         game_finished = false;
       }
     }
+    if(game_finished == true){
+      swal({
+        title: "Fin de partie",
+        text: "Essayez de placer votre pion ailleurs.",
+        type: "error"
+      });
+      }
   }
+}
 }
 
 
