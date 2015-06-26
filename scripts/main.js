@@ -1,15 +1,26 @@
 //// Variables
 var tour = 0;
 var rows = 9;
-var score_one = 0;
-var score_two = 7.5;
 var player = 1;
 var game_history = [];
 var game_finished = false;
 var last_skip = 0; // Used for the end of the game
-var ia_mode = true;
+if(window.location.search == "?mode=duo"){
+  var ia_mode = true;
+}else {
+  var ia_mode = false;
+}
 
 //// We declare the array's
+// score array
+var score = [];
+score[1] = [];
+score[2] = [];
+score[1]["territory"] = 0;
+score[1]["present_paws"] = 0;
+score[2]["territory"] = 0;
+score[2]["present_paws"] = 7.5;
+
 // group array -> contain the ID of the group for each row
 var group = new Array();
 for (var i = 0; i < rows; i++) {
@@ -108,7 +119,7 @@ function next_step(id) {
           atari(x, y - 1);
         }
 
-        // Player alternation
+        // Player alternation and score + 1
         if (player == 1) {
           player = 2;
         } else {
@@ -268,6 +279,11 @@ function count_liberties(x, y) {
   }
   if (captured_cells > 0) {
     console.log("Le joueur " + player + " a capturé " + captured_cells + " cases à l'ennemi !");
+    if (player == 1) {
+      score[2]["present_paws"] -= captured_cells;
+    } else {
+      score[1]["present_paws"] -= captured_cells;
+    }
   }
   captured_cells = 0;
 }
@@ -305,18 +321,22 @@ function auto_backup() {
       },
       function() {
         grid = JSON.parse(localStorage.getItem('game_state'));
-        score_one = localStorage.getItem('score_one');
-        score_two = localStorage.getItem('score_two');
-        document.getElementById("score_one").innerHTML = score_one;
-        document.getElementById("score_two").innerHTML = score_two;
+        score[1]["present_paws"] = localStorage.getItem('score_1_present_paws');
+        score[1]["territory"] = localStorage.getItem('score_1_territory');
+        score[2]["present_paws"] = localStorage.getItem('score_2_present_paws');
+        score[2]["territory"] = localStorage.getItem('score_2_territory');
+        document.getElementById("score_one").innerHTML = score[1]["present_paws"] + score[1]["territory"];
+        document.getElementById("score_two").innerHTML = score[2]["present_paws"] + score[2]["territory"];
         update_html();
       });
   }
   if (tour != 0) {
     var game_state = JSON.stringify(grid);
     localStorage.setItem('game_state', game_state);
-    localStorage.setItem('score_one', score_one);
-    localStorage.setItem('score_two', score_two);
+    localStorage.setItem('score_1_present_paws', score[1]["present_paws"]);
+    localStorage.setItem('score_1_territory', score[1]["territory"]);
+    localStorage.setItem('score_2_present_paws', score[2]["present_paws"]);
+    localStorage.setItem('score_2_territory', score[2]["territory"]);
   }
 }
 
@@ -451,8 +471,8 @@ function skip(spec) {
 function scores() {
   if (tour > 1) {
     var scores_by_group = [];
-    score_one = 0;
-    score_two = 0;
+    score[1]["territory"] = 0;
+    score[2]["territory"] = 0;
     for (x = 0; x < rows; x++) {
       for (y = 0; y < rows; y++) {
         var group_id = group[x][y];
@@ -505,15 +525,25 @@ function scores() {
     for (var i = 0; i < scores_by_group.length; i++) {
       if ((typeof(scores_by_group[i]) != "undefined") && (scores_by_group[i]["neutral"] == false)) {
         if (scores_by_group[i]["player"] == 1) {
-          score_one += scores_by_group[i]["points"];
+          score[1]["territory"] += scores_by_group[i]["points"];
         } else {
-          score_two += scores_by_group[i]["points"];
+          score[2]["territory"] += scores_by_group[i]["points"];
         }
       }
     }
-    document.getElementById("score_one").innerHTML = score_one;
-    document.getElementById("score_two").innerHTML = score_two;
   }
+
+  // Player score + 1
+  if (player == 1) {
+    score[1]["present_paws"] += 1;
+  } else {
+    score[2]["present_paws"] += 1;
+  }
+
+
+  document.getElementById("score_one").innerHTML = (score[1]["territory"] + score[1]["present_paws"]);
+  document.getElementById("score_two").innerHTML = (score[2]["territory"] + score[2]["present_paws"]);
+
 
   if (tour > 15 && ia_mode == true) {
     game_finished = true;

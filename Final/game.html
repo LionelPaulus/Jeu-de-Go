@@ -8,27 +8,19 @@
   <link rel="stylesheet" type="text/css" href="style/sweetalert.css">
 </head>
 
-<body>
-	<img id="back" class="img" src="images/youhou.png">
-	
-  <div style="position:relative;">
-    <div id="goban">
-    </div>
-  </div>
+<body class="game">
   <div id="grid"></div>
+  <div id="score_one">0</div>
+  <div id="score_two">0</div>
   <button class="passer" onclick="skip();">
   	<img id="passer" alt="passer" title="passer" src="images/salut1.png">
   </button>
   <button class="abandon" onclick="skip('abandonment');">
   	<img id="abandon" alt="abandon" title="abandon" src="images/salut2.png">
   </button>
- 
-  Score joueur 1: <div id="score_one" style="display: inline-block;">0</div><br>
- 
-  Score joueur 2: <div id="score_two" style="display: inline-block;">0</div>
-  
+
   <script type="text/javascript" src="scripts/main.js"></script>
-  <script type="text/javascript" src="scripts/sweetalert.min.js"></script> 
+  <script type="text/javascript" src="scripts/sweetalert.min.js"></script>
 </body>
 
 </html>

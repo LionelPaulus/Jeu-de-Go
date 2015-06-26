@@ -27,7 +27,7 @@ for (var i = 0; i < rows; i++) {
 }
 
 //// Generate the DOM
-generate_background();
+//generate_background();
 generate_cells();
 // HTML table
 function generate_background() {
