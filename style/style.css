@@ -30,7 +30,7 @@ body.game {
   height: 44.7px;
 }
 .player1 {
-  background-image: url(../images/pionco.png);
+  background-image: url(../images/pionin.png);
   background-size: contain;
   background-repeat: no-repeat;
   display: inline-block;
@@ -38,7 +38,7 @@ body.game {
   height: 44.7px;
 }
 .player2 {
-  background-image: url(../images/pionin.png);
+  background-image: url(../images/pionco.png);
   background-size: contain;
   background-repeat: no-repeat;
   display: inline-block;

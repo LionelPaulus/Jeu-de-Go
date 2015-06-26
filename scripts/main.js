@@ -2,6 +2,7 @@
 var tour = 0;
 var rows = 9;
 var player = 1;
+var winner = 1;
 var game_history = [];
 var game_finished = false;
 var last_skip = 0; // Used for the end of the game
@@ -418,9 +419,9 @@ function skip(spec) {
     } else {
       game_finished = true;
       if(player == 1){
-        var winner = 2;
+        winner = 2;
       }else{
-        var winner = 1;
+        winner = 1;
       }
       swal({
           title: "Et c'est un abandon !",
@@ -429,7 +430,7 @@ function skip(spec) {
           confirmButtonText: "Nouvelle partie",
           closeOnConfirm: false,
           showCancelButton: true,
-          cancelButtonText: "Voir les scores"
+          cancelButtonText: "Voir les scores",
         },
         function() {
           window.location.reload();
@@ -439,9 +440,9 @@ function skip(spec) {
     if (((last_skip + 1) == tour) && (tour > 1)) {
       game_finished = true;
       if(score[1]["territory"]+score[1]["present_paws"]>score[2]["territory"]+score[2]["present_paws"]){
-        var winner = 1;
+        winner = 1;
       }else {
-        var winner = 2;
+        winner = 2;
       }
       swal({
           title: "Le joueur "+ winner + " a gagné !",
@@ -520,7 +521,8 @@ function scores() {
           }
           // Up
           if ((x - 1) >= 0 && grid[x - 1][y] > 0) {
-            if (scores_by_group[group_id]["player"] == 0) {
+            if
+             (scores_by_group[group_id]["player"] == 0) {
               scores_by_group[group_id]["player"] = grid[x - 1][y];
             } else if (grid[x - 1][y] != scores_by_group[group_id]["player"]) {
               scores_by_group[group_id]["neutral"] = true;
@@ -550,15 +552,37 @@ function scores() {
     score[2]["present_paws"] += 1;
   }
 
+  if(score[1]["territory"]+score[1]["present_paws"]>score[2]["territory"]+score[2]["present_paws"]){
+    winner = 1;
+  }else {
+    winner = 2;
+  }
   document.getElementById("score_one").innerHTML = (score[1]["territory"] + score[1]["present_paws"]);
   document.getElementById("score_two").innerHTML = (score[2]["territory"] + score[2]["present_paws"]);
 
-  if (tour > 15 && ia_mode == true) {
+  if (tour > 15) {
     game_finished = true;
+
     for (var k = 0; k < scores_by_group.length; k++) {
       if ((typeof(scores_by_group[k]) != "undefined") && (scores_by_group[k]["neutral"] == true)) {
         game_finished = false;
+        console.log(game_finished);
+        console.log("hehe");
       }
+    }
+    if(game_finished == true) {
+      swal({
+          title: "Le joueur "+ winner + " a gagné !",
+          text: "Les territoires sont conquis !",
+          imageUrl: "images/cup-128.png",
+          confirmButtonText: "Nouvelle partie",
+          closeOnConfirm: false,
+          showCancelButton: true,
+          cancelButtonText: "Voir les scores"
+        },
+        function() {
+          window.location.reload();
+        });
     }
   }
 }

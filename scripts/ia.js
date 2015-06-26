@@ -17,7 +17,7 @@ function ia() {
   if(strategy == 1){
     for (x = 0; x < rows; x++) {
       for (y = 0; y < rows; y++) {
-        if (grid[x][y] == player) {
+        if (grid[x][y] == player && liberties(x,y) >= 1) {
           if (attributePos(x, y) != "nope") {
             return attributePos(x, y);
           }
