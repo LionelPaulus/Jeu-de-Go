@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Jeu de Go</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css">
+  <link rel="stylesheet" type="text/css" href="style/sweetalert.css">
+</head>
+
+<body>
+  <div style="position:relative;">
+    <div id="goban">
+    </div>
+  </div>
+  <div id="grid"></div>
+  <button onclick="save_game();">Enregistrer</button><button onclick="reload_game();">Reprendre</button><button onclick="skip();">Passer son tour</button><button onclick="skip('abandonment');">Abandonner</button><button onclick="score();">Compter scores</button><br>
+  <hr style="margin-top: 470px;">
+  Score joueur 1: <div id="score_one" style="display: inline-block;">0</div><br>
+  Score joueur 2: <div id="score_two" style="display: inline-block;">0</div>
+  <script type="text/javascript" src="scripts/sweetalert.min.js"></script>
+  <script type="text/javascript" src="scripts/main.js"></script>
+  <script type="text/javascript" src="scripts/ia.js"></script>
+</body>
+
+</html>

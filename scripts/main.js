@@ -5,10 +5,10 @@ var player = 1;
 var game_history = [];
 var game_finished = false;
 var last_skip = 0; // Used for the end of the game
-if (window.location.search == "?mode=duo") {
-  var ia_mode = false;
-} else {
+if(window.location.search == "?mode=duo"){
   var ia_mode = true;
+}else {
+  var ia_mode = false;
 }
 
 //// We declare the array's
@@ -38,7 +38,7 @@ for (var i = 0; i < rows; i++) {
 }
 
 //// Generate the DOM
-generate_background();
+//generate_background();
 generate_cells();
 // HTML table
 function generate_background() {
@@ -119,7 +119,7 @@ function next_step(id) {
           atari(x, y - 1);
         }
 
-        // Player alternation and score + 1
+        // Player alternation
         if (player == 1) {
           player = 2;
         } else {
@@ -130,27 +130,18 @@ function next_step(id) {
         if (player == 2 && ia_mode == true) {
           //setTimeout(function() {
           var ia_data = ia();
-          console.log("Position IA: " + ia_data);
           next_step(ia_data);
           //}, 4000);
         }
       }
     }
-  } else {
-    console.log("tamere");
   }
 }
 
 // Detect if player is trying to commit suicide or not
 function suicide(x, y) {
   grid[x][y] = player;
-  console.log("player: " + player);
   var dead = false;
-
-  /*if (liberties(x, y) == 0 && (liberties(x + 1, y) != 0 && liberties(x - 1, y) != 0 && liberties(x, y + 1) != 0 && liberties(x, y - 1) != 0)) {
-    grid[x][y] = 0;
-    return true;
-  }*/
 
   if (liberties(x, y) == 0) {
     dead = true;
@@ -280,7 +271,6 @@ function count_liberties(x, y) {
     }
   }
   if (captured_cells > 0) {
-    console.log("Le joueur " + player + " a capturé " + captured_cells + " cases à l'ennemi !");
     if (player == 1) {
       score[2]["present_paws"] -= captured_cells;
     } else {
@@ -388,7 +378,6 @@ function inArray(tableau, element) {
 
 function atari(x, y) {
   if (liberties(x, y) == 1) {
-    console.log(("ATARI en " + x + "/" + y));
     return true;
   } else {
     return false;
@@ -403,7 +392,7 @@ function ko(x, y) {
     if ((tour > 1) && (game_history[tour - 1]["state"] == JSON.stringify(grid))) {
       swal({
         title: "Règle du KO",
-        text: "La règle du ko interdit la reprise immédiate dans une situation de ko. Cette régle permet d'éviter des prises et reprises qui ne s'arrêteraient jamais.",
+        text: "La règle du ko interdit la reprise immédiate dans une situation de ko. Cette règle permet d'éviter des prises et reprises qui ne s'arrêteraient jamais.",
         type: "error"
       });
       grid[x][y] = 0;
@@ -415,6 +404,10 @@ function ko(x, y) {
 }
 
 function skip(spec) {
+  if (ia_mode == true & player == 2) {
+    return;
+  }
+
   if (spec == "abandonment") {
     if (tour == 0) {
       swal({
@@ -424,9 +417,14 @@ function skip(spec) {
       });
     } else {
       game_finished = true;
+      if(player == 1){
+        var winner = 2;
+      }else{
+        var winner = 1;
+      }
       swal({
           title: "Et c'est un abandon !",
-          text: "Féliciations, vous avez gagné :)",
+          text: "Le joueur " + player + " a gagné !" ,
           imageUrl: "images/cup-128.png",
           confirmButtonText: "Nouvelle partie",
           closeOnConfirm: false,
@@ -440,8 +438,13 @@ function skip(spec) {
   } else {
     if (((last_skip + 1) == tour) && (tour > 1)) {
       game_finished = true;
+      if(score[1]["territory"]+score[1]["present_paws"]>score[2]["territory"]+score[2]["present_paws"]){
+        var winner = 1;
+      }else {
+        var winner = 2;
+      }
       swal({
-          title: player + " a gagné !",
+          title: "Le joueur "+ winner + " a gagné !",
           text: "Mais vous avez tous les deux très bien joué :)",
           imageUrl: "images/cup-128.png",
           confirmButtonText: "Nouvelle partie",
@@ -466,6 +469,11 @@ function skip(spec) {
         player = 1;
       }
       tour += 1;
+
+      // IA turn
+      if (player == 2 && ia_mode == true) {
+        next_step(ia());
+      }
     }
   }
 }
@@ -542,10 +550,8 @@ function scores() {
     score[2]["present_paws"] += 1;
   }
 
-
   document.getElementById("score_one").innerHTML = (score[1]["territory"] + score[1]["present_paws"]);
   document.getElementById("score_two").innerHTML = (score[2]["territory"] + score[2]["present_paws"]);
-
 
   if (tour > 15 && ia_mode == true) {
     game_finished = true;
@@ -554,17 +560,8 @@ function scores() {
         game_finished = false;
       }
     }
-    if(game_finished == true){
-      swal({
-        title: "Fin de partie",
-        text: "Essayez de placer votre pion ailleurs.",
-        type: "error"
-      });
-      }
   }
 }
-}
-
 
 /// Start elementary fonctions
-//auto_backup();
+auto_backup();
