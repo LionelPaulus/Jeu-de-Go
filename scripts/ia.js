@@ -12,6 +12,31 @@ function ia() {
     }
   }
 
+  var strategy = (Math.floor(Math.random()*2));
+
+  if(strategy == 1){
+    for(x=0; x < rows; x++){
+      for(y = 0; y < rows ; y++){
+        if(grid[x][y] != player && grid[x][y] != 0){
+          if(attributePos(x,y) != "nope"){
+              return attributePos(x,y);
+          }
+        }
+      }
+    }
+  }
+  else if (strategy == 2) {
+    for(x=0; x < rows; x++){
+      for(y = 0; y < rows ; y++){
+        if(grid[x][y] == player){
+          if(attributePos(x,y) != "nope"){
+              return attributePos(x,y);
+          }
+        }
+      }
+    }
+  }
+
   do {
     var x = (Math.floor(Math.random() * rows));
     var y = (Math.floor(Math.random() * rows));
