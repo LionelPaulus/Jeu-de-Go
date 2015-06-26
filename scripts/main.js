@@ -6,9 +6,9 @@ var game_history = [];
 var game_finished = false;
 var last_skip = 0; // Used for the end of the game
 if(window.location.search == "?mode=duo"){
-  var ia_mode = true;
-}else {
   var ia_mode = false;
+}else {
+  var ia_mode = true;
 }
 
 //// We declare the array's
