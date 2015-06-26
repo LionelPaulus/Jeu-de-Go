@@ -1,13 +1,10 @@
 function ia() {
   var count = 0;
   var strategy = Math.floor(Math.random() * (2));
-  console.log("stratégie : " + strategy);
   for (x = 0; x < rows; x++) {
     for (y = 0; y < rows; y++) {
       if (atari(x, y) == true) {
         if (attributePos(x, y) != "nope") {
-          console.log("hehe");
-          console.log(attributePos(x, y));
           return attributePos(x, y);
         }
       }

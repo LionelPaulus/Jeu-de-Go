@@ -566,8 +566,6 @@ function scores() {
     for (var k = 0; k < scores_by_group.length; k++) {
       if ((typeof(scores_by_group[k]) != "undefined") && (scores_by_group[k]["neutral"] == true)) {
         game_finished = false;
-        console.log(game_finished);
-        console.log("hehe");
       }
     }
     if(game_finished == true) {
