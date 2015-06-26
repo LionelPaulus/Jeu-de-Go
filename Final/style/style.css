@@ -1,0 +1,117 @@
+body {
+	background-color:black;
+	margin:0;
+	
+}
+
+.img {
+	
+	position: absolute;
+	
+}
+
+
+
+#grid {
+  z-index: 100;
+  display: inline-block;
+  position: absolute;
+  left: 52.7%;
+  margin-left: -267px;
+  margin-top: 225px;
+  width: auto;
+  height: auto;
+}
+
+.lines div {
+  border-radius: 100px;
+}
+
+/* PIONS */
+
+.empty {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+}
+
+.player1 {
+  background-image: url(../images/pionco.png);
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  background-color: black;
+}
+
+.player2 {
+  background-image: url(../images/pionin.png);
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  background-color: blue;
+}
+
+/* BACKGROUND */
+.lines {
+  height: 50px;
+}
+
+#tableau {
+  border-collapse: collapse;
+  position: absolute;
+  left: 52.5%;
+  margin-left: -240px;
+  margin-top: 250px;
+}
+
+tr {
+  display: table-row;
+  vertical-align: inherit;
+  border-color: inherit;
+}
+
+#tableau .cellule {
+  width: 47px;
+  height: 47px;
+}
+
+td {
+  display: table-cell;
+  vertical-align: inherit;
+}
+
+
+
+button.abandon{
+	margin-left: 78%;
+	position: fixed;
+	margin-top: 48%;
+	padding: 0.1px;
+	border-radius: 14px;
+}
+
+button.passer{
+	margin-left: 5%;
+	position: fixed;
+	margin-top: 48%;
+	padding: 0.1px;
+	border-radius: 14px;
+}
+
+div#score_one{
+	display: inline-block;
+	position: absolute;
+	margin-top:34.1%;
+	font-family: 'cowboy movie';
+	font-size: 2em;
+	color:#834A22;
+}
+
+div#score_two{
+	position: absolute;
+	margin-left: 75%;
+	margin-top:32.5%;
+	font-family: 'cowboy movie';
+	font-size: 2em;
+	color:#834A22;
+}
