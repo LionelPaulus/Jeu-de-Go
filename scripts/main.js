@@ -131,12 +131,32 @@ function next_step(id) {
 // Detect if player is trying to commit suicide or not
 function suicide(x, y) {
   grid[x][y] = player;
-  if (liberties(x, y) == 0 && (liberties(x + 1, y) != 0 && liberties(x - 1, y) != 0 && liberties(x, y + 1) != 0 && liberties(x, y - 1) != 0)) {
+  console.log("player: "+ player);
+  var dead = false;
+
+  /*if (liberties(x, y) == 0 && (liberties(x + 1, y) != 0 && liberties(x - 1, y) != 0 && liberties(x, y + 1) != 0 && liberties(x, y - 1) != 0)) {
     grid[x][y] = 0;
     return true;
+  }*/
+
+  if (liberties(x, y) == 0) {
+    dead = true;
+    if ((y - 1) >= 0 && liberties(x, y - 1) == 0 && grid[x][y - 1] != player) {
+      dead = false;
+    } else if ((x + 1) < rows && liberties(x + 1, y) == 0 && grid[x + 1][y] != player) {
+      dead = false;
+    } else if ((y + 1) < rows && liberties(x, y + 1) == 0 && grid[x][y + 1] != player) {
+      dead = false;
+    } else if ((x - 1) >= 0 && liberties(x - 1, y) == 0 && grid[x - 1][y] != player) {
+      dead = false;
+    }
   }
-  grid[x][y] = 0;
-  return false;
+
+  if (dead == true) {
+    grid[x][y] = 0;
+    return true; // Suicide interdit
+  }
+  return false; // Suicide autorisé ou pas de suicide
 }
 
 function identify_groups() {
@@ -302,11 +322,7 @@ function auto_backup() {
 
 function liberties(x, y) {
   identify_groups();
-
   var group_id = group[x][y];
-  if (group_id == 0) {
-    return "Aucun pion à cet endroit.";
-  }
   var liberte = 0;
   var liberties_already_counted = [];
 
@@ -487,7 +503,7 @@ function scores() {
 
     // Calculate the totals
     for (var i = 0; i < scores_by_group.length; i++) {
-      if (scores_by_group[i] && scores_by_group[i]["neutral"] == false) {
+      if ((typeof(scores_by_group[i]) != "undefined") && (scores_by_group[i]["neutral"] == false)) {
         if (scores_by_group[i]["player"] == 1) {
           score_one += scores_by_group[i]["points"];
         } else {
@@ -500,12 +516,9 @@ function scores() {
   }
 
   if (tour > 15 && ia_mode == true) {
-    console.log(scores_by_group.length);
-    console.log(scores_by_group[73]["neutral"]);
     game_finished = true;
     for (var k = 0; k < scores_by_group.length; k++) {
-      if (scores_by_group[k] && scores_by_group[k]["neutral"] == true) {
-        console.log(k);
+      if ((typeof(scores_by_group[k]) != "undefined") && (scores_by_group[k]["neutral"] == true)) {
         game_finished = false;
       }
     }
