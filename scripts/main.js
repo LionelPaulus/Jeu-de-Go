@@ -439,7 +439,7 @@ function skip(spec) {
     if (((last_skip + 1) == tour) && (tour > 1)) {
       game_finished = true;
       swal({
-          title: "Le joueur X a gagné !",
+          title: player + " a gagné !",
           text: "Mais vous avez tous les deux très bien joué :)",
           imageUrl: "images/cup-128.png",
           confirmButtonText: "Nouvelle partie",
