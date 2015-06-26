@@ -2,12 +2,12 @@ body {
   margin: 0;
 }
 body.game {
-	background: url("../images/youhou.png")50% 0%;
-	background-repeat: no-repeat;
+  background: url("../images/youhou.png")50% 0%;
+  background-repeat: no-repeat;
 }
 @font-face {
-    font-family: "cowboy movie";
-    src: url('../style/Cowboy_Movie.ttf');
+  font-family: "cowboy movie";
+  src: url('../style/Cowboy_Movie.ttf');
 }
 #grid {
   z-index: 100;
@@ -61,18 +61,22 @@ td {
   vertical-align: inherit;
 }
 button.abandon {
-  margin-left: 78%;
-  position: fixed;
-  margin-top: 48%;
   padding: 0.1px;
   border-radius: 14px;
+  display: block;
+  width: auto;
+  margin: auto;
+  margin-right: 30px;
+  margin-top: -60px;
 }
 button.passer {
-  margin-left: 5%;
-  position: fixed;
-  margin-top: 48%;
   padding: 0.1px;
   border-radius: 14px;
+  display: block;
+  width: auto;
+  margin: auto;
+  margin-left: 30px;
+  margin-top: 70px;
 }
 div#score_one {
   display: block;
